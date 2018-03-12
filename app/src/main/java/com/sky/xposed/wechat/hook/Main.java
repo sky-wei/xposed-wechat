@@ -1,6 +1,8 @@
 package com.sky.xposed.wechat.hook;
 
+import android.app.Application;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -8,6 +10,7 @@ import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.config.ConfigManager;
 import com.sky.xposed.wechat.config.v665.ConfigManagerV665;
 import com.sky.xposed.wechat.hook.base.BaseHook;
+import com.sky.xposed.wechat.hook.module.OtherModule;
 import com.sky.xposed.wechat.ui.dialog.SettingDialog;
 import com.sky.xposed.wechat.util.Alog;
 import com.sky.xposed.wechat.util.PackageUitl;
@@ -48,46 +51,16 @@ public class Main extends BaseHook {
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
 
+                final Application application = (Application) param.thisObject;
+                final Context context = application.getApplicationContext();
+
                 // 初始化
+                HookManager
+                        .getInstance()
+                        .initialization(context, getLoadPackageParam())
+                        .register(new OtherModule());
             }
         });
-
-        findAndHookMethod(
-                "com.tencent.mm.ui.LauncherUI",
-                "onCreateOptionsMenu",
-                Menu.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        super.afterHookedMethod(param);
-
-                        // 添加菜单入口
-                        Menu menu = (Menu) param.args[0];
-                        menu.add(99, 200, 1, Constant.Strings.TITLE);
-                    }
-                });
-
-        findAndHookMethod(
-                "com.tencent.mm.ui.LauncherUI",
-                "onOptionsItemSelected",
-                MenuItem.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        super.afterHookedMethod(param);
-
-                        // 添加菜单入口
-                        MenuItem menuItem = (MenuItem) param.args[0];
-                        FragmentManager fragmentManager = (FragmentManager) XposedHelpers
-                                .callMethod(param.thisObject, "getFragmentManager");
-
-                        if (menuItem.getItemId() == 200) {
-
-                            SettingDialog dialog = new SettingDialog();
-                            dialog.show(fragmentManager, "setting");
-                        }
-                    }
-                 });
     }
 
     private ConfigManager loadWechatConfig(PackageUitl.SimplePackageInfo packageInfo) {

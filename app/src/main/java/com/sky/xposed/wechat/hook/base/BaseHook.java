@@ -36,6 +36,10 @@ public abstract class BaseHook implements IXposedHookLoadPackage {
         return ActivityThread.currentActivityThread().getSystemContext();
     }
 
+    public XC_LoadPackage.LoadPackageParam getLoadPackageParam() {
+        return mParam;
+    }
+
     public Class findClass(String className) {
         return findClass(className, mParam.classLoader);
     }
