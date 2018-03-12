@@ -34,4 +34,9 @@ public interface Constant {
 
         int BLUE = 0XFF66CCFF;
     }
+
+    interface Strings {
+
+        String TITLE = "WeBlue";
+    }
 }

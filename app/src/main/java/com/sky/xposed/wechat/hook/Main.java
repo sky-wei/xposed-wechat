@@ -9,6 +9,7 @@ import com.sky.xposed.wechat.config.ConfigManager;
 import com.sky.xposed.wechat.config.v665.ConfigManagerV665;
 import com.sky.xposed.wechat.hook.base.BaseHook;
 import com.sky.xposed.wechat.ui.dialog.SettingDialog;
+import com.sky.xposed.wechat.util.Alog;
 import com.sky.xposed.wechat.util.PackageUitl;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -62,7 +63,7 @@ public class Main extends BaseHook {
 
                         // 添加菜单入口
                         Menu menu = (Menu) param.args[0];
-                        menu.add(99, 200, 1, "WeBlue");
+                        menu.add(99, 200, 1, Constant.Strings.TITLE);
                     }
                 });
 
@@ -87,8 +88,6 @@ public class Main extends BaseHook {
                         }
                     }
                  });
-
-
     }
 
     private ConfigManager loadWechatConfig(PackageUitl.SimplePackageInfo packageInfo) {

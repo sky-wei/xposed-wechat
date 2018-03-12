@@ -1,9 +1,7 @@
 package com.sky.xposed.wechat.ui.dialog;
 
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,7 +29,7 @@ import java.util.List;
  */
 
 public class SettingDialog extends BaseDialogFragment
-        implements DialogTitle.OnMoreClickListener, OnItemEventListener {
+        implements DialogTitle.OnTitleEventListener, OnItemEventListener {
 
     private DialogTitle mDialogTitle;
     private ListView mListView;
@@ -40,11 +38,7 @@ public class SettingDialog extends BaseDialogFragment
     @Override
     protected View createView(LayoutInflater inflater, ViewGroup container) {
 
-        LinearLayout content = new LinearLayout(getApplicationContext());
-        content.setLayoutParams(LayoutUtil.newMatchLinearLayoutParams());
-        content.setMinimumWidth(DisplayUtil.sp2px(getApplicationContext(), 360));
-        content.setOrientation(LinearLayout.VERTICAL);
-        content.setBackgroundColor(Color.WHITE);
+        LinearLayout content = LayoutUtil.newCommonLayout(getApplicationContext());
 
         // 添加标题
         mDialogTitle = new DialogTitle(getApplicationContext());
@@ -67,9 +61,9 @@ public class SettingDialog extends BaseDialogFragment
     @Override
     protected void initView(View view, Bundle args) {
 
-        mDialogTitle.setTitle("WeBlue");
+        mDialogTitle.setTitle(Constant.Strings.TITLE);
         mDialogTitle.showMore();
-        mDialogTitle.setMoreOnClickListener(this);
+        mDialogTitle.setOnTitleEventListener(this);
 
         mSettingAdapter = new SimpleListAdapter(getApplicationContext());
         mSettingAdapter.setOnItemEventListener(this);
@@ -79,7 +73,11 @@ public class SettingDialog extends BaseDialogFragment
     }
 
     @Override
-    public void onClick(View view) {
+    public void onCloseEvent(View view) {
+    }
+
+    @Override
+    public void onMoreEvent(View view) {
 
         PopupMenu popupMenu = new PopupMenu(getApplicationContext(), mDialogTitle, Gravity.RIGHT);
         Menu menu = popupMenu.getMenu();
@@ -104,13 +102,18 @@ public class SettingDialog extends BaseDialogFragment
 
         switch (model.getId()) {
             case Constant.ItemId.OTHER:
+                OtherDialog otherDialog = new OtherDialog();
+                otherDialog.show(getChildFragmentManager(), "other");
                 break;
             case Constant.ItemId.DEVELOP:
+                // 开启选项
+                DevelopDialog developDialog = new DevelopDialog();
+                developDialog.show(getChildFragmentManager(), "develop");
                 break;
             case Constant.ItemId.ABOUT:
                 // 显示关于
-                AboutDialog dialog = new AboutDialog();
-                dialog.show(getChildFragmentManager(), "about");
+                AboutDialog aboutDialog = new AboutDialog();
+                aboutDialog.show(getChildFragmentManager(), "about");
                 break;
         }
     }

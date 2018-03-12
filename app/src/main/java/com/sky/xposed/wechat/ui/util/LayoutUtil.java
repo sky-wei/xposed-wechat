@@ -1,8 +1,12 @@
 package com.sky.xposed.wechat.ui.util;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import com.sky.xposed.wechat.util.DisplayUtil;
 
 /**
  * Created by sky on 18-3-11.
@@ -44,5 +48,16 @@ public class LayoutUtil {
 
     public static FrameLayout.LayoutParams newWrapFrameLayoutParams() {
         return newFrameLayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+    }
+
+    public static LinearLayout newCommonLayout(Context context) {
+
+        LinearLayout content = new LinearLayout(context);
+        content.setLayoutParams(LayoutUtil.newMatchLinearLayoutParams());
+        content.setMinimumWidth(DisplayUtil.sp2px(context, 360));
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setBackgroundColor(Color.WHITE);
+
+        return content;
     }
 }

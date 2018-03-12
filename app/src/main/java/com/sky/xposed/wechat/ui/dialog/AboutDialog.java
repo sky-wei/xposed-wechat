@@ -34,7 +34,6 @@ public class AboutDialog extends BaseDialogFragment implements View.OnClickListe
         int left = DisplayUtil.dip2px(getApplicationContext(), 25);
         int top = DisplayUtil.dip2px(getApplicationContext(), 10);
 
-
         LinearLayout linearLayout = new LinearLayout(getApplicationContext());
         linearLayout.setPadding(left, top, left, 0);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -70,7 +69,7 @@ public class AboutDialog extends BaseDialogFragment implements View.OnClickListe
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog.Builder builder =
-                new AlertDialog.Builder(getActivity(), getTheme());
+                new AlertDialog.Builder(getContext());
 
         builder.setTitle("关于");
         builder.setView(createDialogView());
