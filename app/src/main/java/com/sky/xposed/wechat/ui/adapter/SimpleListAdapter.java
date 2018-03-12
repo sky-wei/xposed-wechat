@@ -1,18 +1,15 @@
 package com.sky.xposed.wechat.ui.adapter;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
+import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.data.model.ItemModel;
 import com.sky.xposed.wechat.ui.base.BaseListAdapter;
-import com.sky.xposed.wechat.ui.util.LayoutUtil;
+import com.sky.xposed.wechat.ui.interfaces.OnItemEventListener;
 import com.sky.xposed.wechat.ui.view.SimpleItemView;
-import com.sky.xposed.wechat.util.Alog;
 
 /**
  * Created by sky on 18-3-11.
@@ -20,8 +17,18 @@ import com.sky.xposed.wechat.util.Alog;
 
 public class SimpleListAdapter extends BaseListAdapter<ItemModel> {
 
+    private OnItemEventListener mOnItemEventListener;
+
     public SimpleListAdapter(Context context) {
         super(context);
+    }
+
+    public OnItemEventListener getOnItemEventListener() {
+        return mOnItemEventListener;
+    }
+
+    public void setOnItemEventListener(OnItemEventListener onItemEventListener) {
+        mOnItemEventListener = onItemEventListener;
     }
 
     @Override
@@ -59,7 +66,9 @@ public class SimpleListAdapter extends BaseListAdapter<ItemModel> {
 
         @Override
         public void onClick(View v) {
-            Alog.d("YYYYYYYYYYYYYYYYYYYY");
+            if (mOnItemEventListener != null) {
+                mOnItemEventListener.onItemEvent(Constant.Event.CLICK, v, getAdapterPosition());
+            }
         }
     }
 }

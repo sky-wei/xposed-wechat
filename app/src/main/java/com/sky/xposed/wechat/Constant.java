@@ -15,4 +15,23 @@ public interface Constant {
 
         int APPLICATION = 0x000001;
     }
+
+    interface Event {
+
+        int CLICK = 0x01;
+    }
+
+    interface ItemId {
+
+        int OTHER = 0x0001;
+
+        int DEVELOP = 0x0002;
+
+        int ABOUT = 0x0003;
+    }
+
+    interface Color {
+
+        int BLUE = 0XFF66CCFF;
+    }
 }
