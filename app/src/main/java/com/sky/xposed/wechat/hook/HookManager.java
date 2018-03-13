@@ -1,14 +1,11 @@
 package com.sky.xposed.wechat.hook;
 
 import android.content.Context;
+import android.util.SparseArray;
 
 import com.sky.xposed.wechat.data.PreferencesManager;
-import com.sky.xposed.wechat.hook.base.BaseModule;
 import com.sky.xposed.wechat.hook.module.HookModule;
 import com.sky.xposed.wechat.util.Alog;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -22,7 +19,7 @@ public class HookManager {
 
     private Context mContext;
     private XC_LoadPackage.LoadPackageParam mLoadPackageParam;
-    private List<HookModule> mHookModules = new ArrayList<>();
+    private SparseArray<HookModule> mHookModules = new SparseArray<>();
 
     private HookManager() {
 
@@ -60,11 +57,14 @@ public class HookManager {
         return null;
     }
 
-    public HookManager register(HookModule module) {
+    public HookManager add(HookModule module) {
+
+        // 先移除模块
+        remove(module.getId());
 
         try {
             // 添加
-            mHookModules.add(module);
+            mHookModules.put(module.getId(), module);
 
             // 初始化
             module.initialization(this);
@@ -75,11 +75,15 @@ public class HookManager {
         return this;
     }
 
-    public HookManager unregister(HookModule module) {
+    public HookManager remove(int moduleId) {
+
+        HookModule module = mHookModules.get(moduleId);
+
+        if (module == null) return this;
 
         try {
             // 移除
-            mHookModules.remove(module);
+            mHookModules.remove(module.getId());
 
             // 释放
             module.onHook();
@@ -90,7 +94,11 @@ public class HookManager {
         return this;
     }
 
-    public List<HookModule> getHookModules() {
+    public HookModule get(int moduleId) {
+        return mHookModules.get(moduleId);
+    }
+
+    public SparseArray<HookModule> getHookModules() {
         return mHookModules;
     }
 }

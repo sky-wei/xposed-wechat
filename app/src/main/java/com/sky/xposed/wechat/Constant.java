@@ -21,13 +21,15 @@ public interface Constant {
         int CLICK = 0x01;
     }
 
-    interface ItemId {
+    interface ModuleId {
 
         int OTHER = 0x0001;
 
         int DEVELOP = 0x0002;
 
         int ABOUT = 0x0003;
+
+        int AUTO_LOGIN = 0x0004;
     }
 
     interface Color {

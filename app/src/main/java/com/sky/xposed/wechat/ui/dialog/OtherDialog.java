@@ -5,6 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.sky.xposed.wechat.Constant;
+import com.sky.xposed.wechat.hook.HookManager;
+import com.sky.xposed.wechat.hook.module.HookModule;
+import com.sky.xposed.wechat.hook.module.OtherModule;
 import com.sky.xposed.wechat.ui.base.BaseDialogFragment;
 import com.sky.xposed.wechat.ui.view.CommonFrameLayout;
 import com.sky.xposed.wechat.ui.view.DialogTitle;
@@ -58,5 +62,15 @@ public class OtherDialog extends BaseDialogFragment
     @Override
     public void onCheckedChanged(View view, boolean isChecked) {
 
+        HookModule module = HookManager
+                .getInstance().get(Constant.ModuleId.OTHER);
+
+        if (isChecked) {
+            // 添加模块
+            module.add(Constant.ModuleId.AUTO_LOGIN);
+        } else {
+            // 移除模块
+            module.remove(Constant.ModuleId.AUTO_LOGIN);
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.sky.xposed.wechat.ui.dialog;
 
 
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +15,8 @@ import android.widget.PopupMenu;
 
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.data.model.ItemModel;
+import com.sky.xposed.wechat.hook.HookManager;
+import com.sky.xposed.wechat.hook.module.HookModule;
 import com.sky.xposed.wechat.ui.adapter.SimpleListAdapter;
 import com.sky.xposed.wechat.ui.base.BaseDialogFragment;
 import com.sky.xposed.wechat.ui.interfaces.OnItemEventListener;
@@ -101,16 +104,16 @@ public class SettingDialog extends BaseDialogFragment
         ItemModel model = mSettingAdapter.getItem(position);
 
         switch (model.getId()) {
-            case Constant.ItemId.OTHER:
+            case Constant.ModuleId.OTHER:
                 OtherDialog otherDialog = new OtherDialog();
                 otherDialog.show(getChildFragmentManager(), "other");
                 break;
-            case Constant.ItemId.DEVELOP:
+            case Constant.ModuleId.DEVELOP:
                 // 开启选项
                 DevelopDialog developDialog = new DevelopDialog();
                 developDialog.show(getChildFragmentManager(), "develop");
                 break;
-            case Constant.ItemId.ABOUT:
+            case Constant.ModuleId.ABOUT:
                 // 显示关于
                 AboutDialog aboutDialog = new AboutDialog();
                 aboutDialog.show(getChildFragmentManager(), "about");
@@ -120,11 +123,18 @@ public class SettingDialog extends BaseDialogFragment
 
     private List<ItemModel> newItemModels() {
 
+        SparseArray<HookModule> hookModules =
+                HookManager.getInstance().getHookModules();
+
         List<ItemModel> itemModels = new ArrayList<>();
 
-        itemModels.add(new ItemModel(Constant.ItemId.OTHER, "其他功能"));
-        itemModels.add(new ItemModel(Constant.ItemId.DEVELOP, "开发调试"));
-        itemModels.add(new ItemModel(Constant.ItemId.ABOUT, "关于"));
+        for (int i = 0; i < hookModules.size(); i++) {
+            // 添加注册的模块
+            HookModule module = hookModules.valueAt(i);
+            itemModels.add(new ItemModel(module.getId(), module.getName()));
+        }
+        // 关于
+        itemModels.add(new ItemModel(Constant.ModuleId.ABOUT, "关于"));
 
         return itemModels;
     }

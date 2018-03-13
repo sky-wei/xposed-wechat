@@ -1,10 +1,12 @@
 package com.sky.xposed.wechat.hook.base;
 
 import android.content.Context;
+import android.util.SparseArray;
 
 import com.sky.xposed.wechat.data.PreferencesManager;
 import com.sky.xposed.wechat.hook.HookManager;
 import com.sky.xposed.wechat.hook.module.HookModule;
+import com.sky.xposed.wechat.util.Alog;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
@@ -16,16 +18,22 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public abstract class BaseModule implements HookModule {
 
+    private HookManager mHookManager;
     private Context mContext;
     private PreferencesManager mPreferencesManager;
     private XC_LoadPackage.LoadPackageParam mLoadPackageParam;
+    private SparseArray<HookModule> mHookModules = new SparseArray<>();
 
     @Override
     public void initialization(HookManager hookManager) {
-
+        mHookManager = hookManager;
         mContext = hookManager.getContext();
         mPreferencesManager = hookManager.getPreferencesManager();
         mLoadPackageParam = hookManager.getLoadPackageParam();
+    }
+
+    @Override
+    public void onHook() {
     }
 
     @Override
@@ -34,6 +42,52 @@ public abstract class BaseModule implements HookModule {
 
     @Override
     public void release() {
+    }
+
+    @Override
+    public void reloadConfig() {
+
+        for (int i = 0; i < mHookModules.size(); i++) {
+            // 添加注册的模块
+            HookModule module = mHookModules.valueAt(i);
+            module.reloadConfig();
+        }
+    }
+
+    public void add(HookModule module) {
+
+        // 先移除模块
+        remove(module.getId());
+
+        try {
+            // 添加
+            mHookModules.put(module.getId(), module);
+
+            // 初始化
+            module.initialization(mHookManager);
+            module.onHook();
+        } catch (Throwable tr) {
+            Alog.e("注册异常", tr);
+        }
+    }
+
+    @Override
+    public void remove(int moduleId) {
+
+        HookModule module = mHookModules.get(moduleId);
+
+        if (module == null) return ;
+
+        try {
+            // 移除
+            mHookModules.remove(module.getId());
+
+            // 释放
+            module.onHook();
+            module.release();
+        } catch (Throwable tr) {
+            Alog.e("注册异常", tr);
+        }
     }
 
     public Context getContext() {

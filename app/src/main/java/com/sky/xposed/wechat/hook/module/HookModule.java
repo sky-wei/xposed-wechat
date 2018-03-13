@@ -8,6 +8,10 @@ import com.sky.xposed.wechat.hook.HookManager;
 
 public interface HookModule {
 
+    int getId();
+
+    String getName();
+
     void initialization(HookManager hookManager);
 
     void onHook();
@@ -15,4 +19,10 @@ public interface HookModule {
     void onUnhook();
 
     void release();
+
+    void reloadConfig();
+
+    void add(int moduleId);
+
+    void remove(int moduleId);
 }
