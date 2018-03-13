@@ -19,6 +19,7 @@ public class HookManager {
 
     private Context mContext;
     private XC_LoadPackage.LoadPackageParam mLoadPackageParam;
+    private PreferencesManager mPreferencesManager;
     private SparseArray<HookModule> mHookModules = new SparseArray<>();
 
     private HookManager() {
@@ -37,6 +38,7 @@ public class HookManager {
 
         mContext = context;
         mLoadPackageParam = param;
+        mPreferencesManager = new PreferencesManager(context);
 
         return this;
     }
@@ -54,7 +56,7 @@ public class HookManager {
     }
 
     public PreferencesManager getPreferencesManager() {
-        return null;
+        return mPreferencesManager;
     }
 
     public HookManager add(HookModule module) {
@@ -70,7 +72,7 @@ public class HookManager {
             module.initialization(this);
             module.onHook();
         } catch (Throwable tr) {
-            Alog.e("注册异常", tr);
+            Alog.e("add", tr);
         }
         return this;
     }
@@ -86,10 +88,10 @@ public class HookManager {
             mHookModules.remove(module.getId());
 
             // 释放
-            module.onHook();
+            module.onUnhook();
             module.release();
         } catch (Throwable tr) {
-            Alog.e("注册异常", tr);
+            Alog.e("remove", tr);
         }
         return this;
     }

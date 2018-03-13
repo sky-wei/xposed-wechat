@@ -31,6 +31,11 @@ public class OtherModule extends BaseModule {
     public void onHook() {
         super.onHook();
 
+        if (getPreferencesManager()
+                .getBoolean(Constant.Preference.AUTO_LOGIN, false)) {
+            // 添加到列表中
+            add(Constant.ModuleId.AUTO_LOGIN);
+        }
     }
 
     @Override

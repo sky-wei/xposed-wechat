@@ -6,9 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sky.xposed.wechat.Constant;
+import com.sky.xposed.wechat.data.PreferencesManager;
 import com.sky.xposed.wechat.hook.HookManager;
 import com.sky.xposed.wechat.hook.module.HookModule;
-import com.sky.xposed.wechat.hook.module.OtherModule;
 import com.sky.xposed.wechat.ui.base.BaseDialogFragment;
 import com.sky.xposed.wechat.ui.view.CommonFrameLayout;
 import com.sky.xposed.wechat.ui.view.DialogTitle;
@@ -25,6 +25,8 @@ public class OtherDialog extends BaseDialogFragment
     private CommonFrameLayout mCommonFrameLayout;
 
     private SwitchItemView sivPcAutoLogin;
+    private PreferencesManager mPreferencesManager;
+
 
     @Override
     protected View createView(LayoutInflater inflater, ViewGroup container) {
@@ -44,9 +46,16 @@ public class OtherDialog extends BaseDialogFragment
     @Override
     protected void initView(View view, Bundle args) {
 
+        mPreferencesManager =
+                HookManager.getInstance().getPreferencesManager();
+
         mDialogTitle.setTitle("其他设置");
         mDialogTitle.showClose();
         mDialogTitle.setOnTitleEventListener(this);
+
+        // 恢复状态
+        sivPcAutoLogin.setChecked(mPreferencesManager
+                .getBoolean(Constant.Preference.AUTO_LOGIN, false));
     }
 
     @Override
@@ -64,6 +73,10 @@ public class OtherDialog extends BaseDialogFragment
 
         HookModule module = HookManager
                 .getInstance().get(Constant.ModuleId.OTHER);
+
+        // 保存状态值
+        mPreferencesManager.putBoolean(
+                Constant.Preference.AUTO_LOGIN, isChecked);
 
         if (isChecked) {
             // 添加模块

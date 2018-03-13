@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -81,13 +80,21 @@ public class SwitchItemView extends FrameLayout implements View.OnClickListener 
         return tvName.getText().toString();
     }
 
+    public void setChecked(boolean checked) {
+        mSwitch.setChecked(checked);
+    }
+
+    public boolean isChecked() {
+        return mSwitch.isChecked();
+    }
+
     @Override
     public void onClick(View v) {
 
-        mSwitch.setChecked(!mSwitch.isChecked());
+        setChecked(!isChecked());
 
         if (mOnCheckedChangeListener != null)
-            mOnCheckedChangeListener.onCheckedChanged(this, mSwitch.isChecked());
+            mOnCheckedChangeListener.onCheckedChanged(this, isChecked());
     }
 
     public interface OnCheckedChangeListener {

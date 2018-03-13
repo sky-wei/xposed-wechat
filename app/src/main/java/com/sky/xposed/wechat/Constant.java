@@ -41,4 +41,9 @@ public interface Constant {
 
         String TITLE = "WeBlue";
     }
+
+    interface Preference {
+
+        String AUTO_LOGIN = "otherModule.autoLogin";
+    }
 }

@@ -67,7 +67,7 @@ public abstract class BaseModule implements HookModule {
             module.initialization(mHookManager);
             module.onHook();
         } catch (Throwable tr) {
-            Alog.e("注册异常", tr);
+            Alog.e("add", tr);
         }
     }
 
@@ -83,10 +83,10 @@ public abstract class BaseModule implements HookModule {
             mHookModules.remove(module.getId());
 
             // 释放
-            module.onHook();
+            module.onUnhook();
             module.release();
         } catch (Throwable tr) {
-            Alog.e("注册异常", tr);
+            Alog.e("remove", tr);
         }
     }
 
