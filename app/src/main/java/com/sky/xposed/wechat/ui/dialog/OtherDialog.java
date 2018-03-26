@@ -6,13 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sky.xposed.wechat.Constant;
-import com.sky.xposed.wechat.data.PreferencesManager;
-import com.sky.xposed.wechat.hook.HookManager;
-import com.sky.xposed.wechat.hook.module.HookModule;
+import com.sky.xposed.wechat.hook.event.BackgroundEvent;
 import com.sky.xposed.wechat.ui.base.BaseDialogFragment;
 import com.sky.xposed.wechat.ui.view.CommonFrameLayout;
 import com.sky.xposed.wechat.ui.view.DialogTitle;
 import com.sky.xposed.wechat.ui.view.SwitchItemView;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by sky on 18-3-12.
@@ -25,7 +25,6 @@ public class OtherDialog extends BaseDialogFragment
     private CommonFrameLayout mCommonFrameLayout;
 
     private SwitchItemView sivPcAutoLogin;
-    private PreferencesManager mPreferencesManager;
 
 
     @Override
@@ -46,15 +45,12 @@ public class OtherDialog extends BaseDialogFragment
     @Override
     protected void initView(View view, Bundle args) {
 
-        mPreferencesManager =
-                HookManager.getInstance().getPreferencesManager();
-
         mDialogTitle.setTitle("其他设置");
         mDialogTitle.showClose();
         mDialogTitle.setOnTitleEventListener(this);
 
         // 恢复状态
-        sivPcAutoLogin.setChecked(mPreferencesManager
+        sivPcAutoLogin.setChecked(getPreferencesManager()
                 .getBoolean(Constant.Preference.AUTO_LOGIN, false));
     }
 
@@ -70,20 +66,10 @@ public class OtherDialog extends BaseDialogFragment
 
     @Override
     public void onCheckedChanged(View view, boolean isChecked) {
-
-        HookModule module = HookManager
-                .getInstance().get(Constant.ModuleId.OTHER);
-
         // 保存状态值
-        mPreferencesManager.putBoolean(
-                Constant.Preference.AUTO_LOGIN, isChecked);
-
-        if (isChecked) {
-            // 添加模块
-            module.add(Constant.ModuleId.AUTO_LOGIN);
-        } else {
-            // 移除模块
-            module.remove(Constant.ModuleId.AUTO_LOGIN);
-        }
+        getPreferencesManager()
+                .putBoolean(Constant.Preference.AUTO_LOGIN, isChecked);
+        EventBus.getDefault().post(
+                new BackgroundEvent(Constant.EventId.AUTO_LOGIN, isChecked));
     }
 }

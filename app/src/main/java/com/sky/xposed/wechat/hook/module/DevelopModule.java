@@ -20,6 +20,7 @@ public class DevelopModule extends BaseModule {
     }
 
     @Override
-    public void add(int moduleId) {
+    public void onHandleLoadPackage() {
+
     }
 }

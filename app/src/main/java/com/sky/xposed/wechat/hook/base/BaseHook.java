@@ -40,6 +40,10 @@ public abstract class BaseHook implements IXposedHookLoadPackage {
         return mParam;
     }
 
+    public String getProcessName() {
+        return mParam.processName;
+    }
+
     public Class findClass(String className) {
         return findClass(className, mParam.classLoader);
     }

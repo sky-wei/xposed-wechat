@@ -54,7 +54,7 @@ public class LayoutUtil {
 
         LinearLayout content = new LinearLayout(context);
         content.setLayoutParams(LayoutUtil.newMatchLinearLayoutParams());
-        content.setMinimumWidth(DisplayUtil.sp2px(context, 360));
+        content.setMinimumWidth(DisplayUtil.sp2px(context, 300));
         content.setOrientation(LinearLayout.VERTICAL);
         content.setBackgroundColor(Color.WHITE);
 

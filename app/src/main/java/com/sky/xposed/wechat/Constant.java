@@ -21,13 +21,20 @@ public interface Constant {
         int CLICK = 0x01;
     }
 
+    interface EventId {
+
+        int AUTO_LOGIN = 0x10001;
+    }
+
     interface ModuleId {
 
-        int OTHER = 0x0001;
+        int MAIN = 0x0000;
 
-        int DEVELOP = 0x0002;
+        int OTHER = 0x1001;
 
-        int ABOUT = 0x0003;
+        int DEVELOP = 0x1002;
+
+        int ABOUT = 0x1003;
 
         int AUTO_LOGIN = 0x0004;
     }
@@ -45,5 +52,32 @@ public interface Constant {
     interface Preference {
 
         String AUTO_LOGIN = "otherModule.autoLogin";
+    }
+
+    interface Process {
+
+        int MAIN = 0x01;
+
+        int EX_DEVICE = 0x02;
+
+        int PUSH = 0x03;
+
+        int SUPPORT = 0x04;
+
+        int TOOLS = 0x05;
+
+        int SANDBOX = 0x06;
+
+        int OTHER = 0x07;
+    }
+
+    interface Action {
+
+        String HOOK_EVENT = "com.sky.xposed.wechat.ACTION_HOOK_EVENT";
+    }
+
+    interface Key {
+
+        String DATA = "data";
     }
 }

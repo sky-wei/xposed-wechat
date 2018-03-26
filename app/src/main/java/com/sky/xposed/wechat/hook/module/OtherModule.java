@@ -4,6 +4,8 @@ import android.widget.Button;
 
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.hook.base.BaseModule;
+import com.sky.xposed.wechat.hook.event.BackgroundEvent;
+import com.sky.xposed.wechat.util.Alog;
 import com.sky.xposed.wechat.util.FindUtil;
 
 import java.lang.reflect.Field;
@@ -17,6 +19,8 @@ import de.robv.android.xposed.XposedHelpers;
 
 public class OtherModule extends BaseModule {
 
+    private XC_MethodHook.Unhook mAutoLoginUnhook;
+
     @Override
     public int getId() {
         return Constant.ModuleId.OTHER;
@@ -28,85 +32,68 @@ public class OtherModule extends BaseModule {
     }
 
     @Override
-    public void onHook() {
-        super.onHook();
+    public void onHandleLoadPackage() {
 
-        if (getPreferencesManager()
-                .getBoolean(Constant.Preference.AUTO_LOGIN, false)) {
-            // 添加到列表中
-            add(Constant.ModuleId.AUTO_LOGIN);
+        if (isMainProcess()) {
+            // 发送事件
+            postEvent(new BackgroundEvent(Constant.EventId.AUTO_LOGIN,
+                    getPreferencesManager().getBoolean(Constant.Preference.AUTO_LOGIN, false)));
         }
     }
 
     @Override
-    public void add(int moduleId) {
+    public void onBackgroundEvent(BackgroundEvent event) {
+        super.onBackgroundEvent(event);
 
-        if (Constant.ModuleId.AUTO_LOGIN == moduleId) {
-            // 添加模块
-            add(new AutoLoginModule());
+        switch (event.getId()) {
+            case Constant.EventId.AUTO_LOGIN :
+                // 处理自动登录
+                handlerAutoLogin(event.isBooleanValue());
+                break;
         }
     }
 
-    private class AutoLoginModule extends BaseModule {
+    private void handlerAutoLogin(boolean autoLogin) {
 
-        private XC_MethodHook.Unhook mUnhook;
+        Alog.d(">>>>>>>>>>>>>>>>>>>>>>>  cccc " + autoLogin);
 
-        @Override
-        public int getId() {
-            return Constant.ModuleId.AUTO_LOGIN;
+        if (!autoLogin) {
+            // 释放
+            if (mAutoLoginUnhook != null) mAutoLoginUnhook.unhook();
+            return ;
         }
 
-        @Override
-        public String getName() {
-            return "自动登录";
-        }
+        mAutoLoginUnhook = findAndHookMethod(
+                "com.tencent.mm.plugin.webwx.ui.ExtDeviceWXLoginUI",
+                "onResume",
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        super.beforeHookedMethod(param);
 
-        @Override
-        public void onHook() {
+                        final Object thisObject = param.thisObject;
 
-            mUnhook = findAndHookMethod(
-                    "com.tencent.mm.plugin.webwx.ui.ExtDeviceWXLoginUI",
-                    "onResume",
-                    new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            super.beforeHookedMethod(param);
+                        Field fieldButton = FindUtil.firstOrNull(
+                                thisObject.getClass().getDeclaredFields(), new FindUtil.Filter<Field>() {
+                                    @Override
+                                    public boolean accept(Field field) {
+                                        return field.getType() == Button.class;
+                                    }
+                                });
 
-                            final Object thisObject = param.thisObject;
+                        if (fieldButton != null) {
 
-                            Field fieldButton = FindUtil.firstOrNull(
-                                    thisObject.getClass().getDeclaredFields(), new FindUtil.Filter<Field>() {
-                                        @Override
-                                        public boolean accept(Field field) {
-                                            return field.getType() == Button.class;
-                                        }
-                                    });
+                            // 获取登录按钮
+                            Button loginButton = (Button) XposedHelpers
+                                    .getObjectField(thisObject, fieldButton.getName());
 
-                            if (fieldButton != null) {
+                            if (loginButton.isEnabled()) {
 
-                                // 获取登录按钮
-                                Button loginButton = (Button) XposedHelpers
-                                        .getObjectField(thisObject, fieldButton.getName());
-
-                                if (loginButton.isEnabled()) {
-
-                                    // 点击登录
-                                    loginButton.performClick();
-                                }
+                                // 点击登录
+                                loginButton.performClick();
                             }
                         }
-                    });
-        }
-
-        @Override
-        public void onUnhook() {
-            super.onUnhook();
-
-            if (mUnhook != null) mUnhook.unhook();
-        }
-
-        @Override
-        public void add(int moduleId) {
-        }
+                    }
+                });
     }
 }

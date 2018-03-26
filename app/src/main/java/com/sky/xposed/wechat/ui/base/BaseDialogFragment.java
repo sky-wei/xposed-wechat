@@ -8,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.sky.xposed.wechat.data.PreferencesManager;
+import com.sky.xposed.wechat.hook.HookManager;
+
 /**
  * Created by sky on 18-3-11.
  */
@@ -57,5 +60,9 @@ public abstract class BaseDialogFragment extends DialogFragment {
 
     public Context getApplicationContext() {
         return getActivity().getApplicationContext();
+    }
+
+    public PreferencesManager getPreferencesManager() {
+        return HookManager.getInstance().getPreferencesManager();
     }
 }

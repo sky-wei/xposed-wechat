@@ -2,17 +2,23 @@ package com.sky.xposed.wechat.ui.view;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
+import com.sky.xposed.wechat.R;
 import com.sky.xposed.wechat.ui.util.LayoutUtil;
 import com.sky.xposed.wechat.ui.util.ViewUtil;
 import com.sky.xposed.wechat.util.DisplayUtil;
@@ -23,9 +29,9 @@ import com.sky.xposed.wechat.util.DisplayUtil;
 
 public class DialogTitle extends FrameLayout implements View.OnClickListener {
 
-    private ImageView ivClose;
+    private ImageButton ivClose;
     private TextView tvTitle;
-    private ImageView ivMore;
+    private ImageButton ivMore;
     private OnTitleEventListener mOnTitleEventListener;
 
     public DialogTitle(@NonNull Context context) {
@@ -39,39 +45,41 @@ public class DialogTitle extends FrameLayout implements View.OnClickListener {
     public DialogTitle(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        setLayoutParams(LayoutUtil.newViewGroupParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, DisplayUtil.dip2px(getContext(), 45)));
+        int height = DisplayUtil.dip2px(getContext(), 45);
+
+        setLayoutParams(LayoutUtil.newViewGroupParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
         setBackgroundColor(0xFF393A3F);
+        setElevation(6);
 
         LinearLayout tLayout = new LinearLayout(getContext());
         tLayout.setGravity(Gravity.CENTER_VERTICAL);
         tLayout.setOrientation(LinearLayout.HORIZONTAL);
 
-        ivClose = new ImageView(getContext());
+        ivClose = new ImageButton(getContext());
+        ivClose.setLayoutParams(LayoutUtil.newViewGroupParams(height, height));
         ivClose.setTag("close");
         ivClose.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
+        ivClose.setBackground(newBackgroundDrawable());
         ivClose.setOnClickListener(this);
 
         tvTitle = new TextView(getContext());
-        tvTitle.setPadding(DisplayUtil.dip2px(getContext(), 5), 0, 0, 0);
         tvTitle.setTextColor(Color.WHITE);
         tvTitle.setTextSize(18);
 
         tLayout.addView(ivClose);
         tLayout.addView(tvTitle);
 
-        ivMore = new ImageView(getContext());
+        ivMore = new ImageButton(getContext());
         ivMore.setTag("more");
         ivMore.setImageResource(android.R.drawable.ic_menu_more);
+        ivMore.setBackground(newBackgroundDrawable());
         ivMore.setOnClickListener(this);
 
         FrameLayout.LayoutParams params = LayoutUtil.newWrapFrameLayoutParams();
         params.gravity = Gravity.CENTER_VERTICAL;
-        params.leftMargin = DisplayUtil.dip2px(getContext(), 10);
 
-        FrameLayout.LayoutParams imageParams = LayoutUtil.newWrapFrameLayoutParams();
+        FrameLayout.LayoutParams imageParams = LayoutUtil.newFrameLayoutParams(height, height);
         imageParams.gravity = Gravity.CENTER_VERTICAL | Gravity.RIGHT;
-        imageParams.rightMargin = DisplayUtil.dip2px(getContext(), 10);
 
         addView(tLayout, params);
         addView(ivMore, imageParams);
@@ -94,10 +102,12 @@ public class DialogTitle extends FrameLayout implements View.OnClickListener {
 
     public void showClose() {
         ViewUtil.setVisibility(ivClose, View.VISIBLE);
+        tvTitle.setPadding(0, 0, 0, 0);
     }
 
     public void hideClose() {
         ViewUtil.setVisibility(ivClose, View.GONE);
+        tvTitle.setPadding(DisplayUtil.dip2px(getContext(), 15), 0, 0, 0);
     }
 
     public OnTitleEventListener getOnTitleEventListener() {
@@ -127,5 +137,15 @@ public class DialogTitle extends FrameLayout implements View.OnClickListener {
         void onCloseEvent(View view);
 
         void onMoreEvent(View view);
+    }
+
+    private StateListDrawable newBackgroundDrawable() {
+
+        StateListDrawable drawable = new StateListDrawable();
+
+        drawable.addState(new int[] { android.R.attr.state_pressed }, new ColorDrawable(0x66666666));
+        drawable.addState(new int[] {}, new ColorDrawable(0x00000000));
+
+        return drawable;
     }
 }

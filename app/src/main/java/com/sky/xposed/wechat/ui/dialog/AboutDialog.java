@@ -59,7 +59,7 @@ public class AboutDialog extends BaseDialogFragment implements View.OnClickListe
     @Override
     protected void initView(View view, Bundle args) {
 
-        tvVersion.setText("版本：V" + BuildConfig.VERSION_NAME);
+        tvVersion.setText("版本：v" + BuildConfig.VERSION_NAME);
         tvSource.setText(Html.fromHtml("项目：<u>https://github.com/jingcai-wei/xposed-wechat</u>"));
 
         tvSource.setOnClickListener(this);

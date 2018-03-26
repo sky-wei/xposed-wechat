@@ -16,12 +16,13 @@ import android.widget.PopupMenu;
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.data.model.ItemModel;
 import com.sky.xposed.wechat.hook.HookManager;
-import com.sky.xposed.wechat.hook.module.HookModule;
+import com.sky.xposed.wechat.hook.module.Module;
 import com.sky.xposed.wechat.ui.adapter.SimpleListAdapter;
 import com.sky.xposed.wechat.ui.base.BaseDialogFragment;
 import com.sky.xposed.wechat.ui.interfaces.OnItemEventListener;
 import com.sky.xposed.wechat.ui.util.LayoutUtil;
 import com.sky.xposed.wechat.ui.view.DialogTitle;
+import com.sky.xposed.wechat.util.Alog;
 import com.sky.xposed.wechat.util.DisplayUtil;
 
 import java.util.ArrayList;
@@ -123,15 +124,19 @@ public class SettingDialog extends BaseDialogFragment
 
     private List<ItemModel> newItemModels() {
 
-        SparseArray<HookModule> hookModules =
+        SparseArray<Module> hookModules =
                 HookManager.getInstance().getHookModules();
 
         List<ItemModel> itemModels = new ArrayList<>();
 
         for (int i = 0; i < hookModules.size(); i++) {
             // 添加注册的模块
-            HookModule module = hookModules.valueAt(i);
-            itemModels.add(new ItemModel(module.getId(), module.getName()));
+            Module module = hookModules.valueAt(i);
+
+            if ((0x1000 & module.getId()) > 0) {
+                // 添加显示的模块
+                itemModels.add(new ItemModel(module.getId(), module.getName()));
+            }
         }
         // 关于
         itemModels.add(new ItemModel(Constant.ModuleId.ABOUT, "关于"));
