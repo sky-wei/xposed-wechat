@@ -166,4 +166,8 @@ public abstract class BaseModule implements Module {
     public XC_MethodHook.Unhook findAndHookMethod(String className, String methodName, Object... parameterTypesAndCallback) {
         return XposedHelpers.findAndHookMethod(className, mLoadPackageParam.classLoader, methodName, parameterTypesAndCallback);
     }
+
+    public void unhook(XC_MethodHook.Unhook unhook) {
+        if (unhook != null) unhook.unhook();
+    }
 }

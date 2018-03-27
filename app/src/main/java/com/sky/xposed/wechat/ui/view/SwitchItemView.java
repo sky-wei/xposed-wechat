@@ -65,6 +65,8 @@ public class SwitchItemView extends FrameLayout implements View.OnClickListener 
         mSwitch.setFocusable(false);
         mSwitch.setFocusableInTouchMode(false);
 
+        setName("测试");
+
         params = LayoutUtil.newWrapFrameLayoutParams();
         params.gravity = Gravity.CENTER_VERTICAL | Gravity.RIGHT;
 

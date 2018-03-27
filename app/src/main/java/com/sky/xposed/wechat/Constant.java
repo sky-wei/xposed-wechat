@@ -24,6 +24,14 @@ public interface Constant {
     interface EventId {
 
         int AUTO_LOGIN = 0x10001;
+
+        int ACTIVITY_CYCLE = 0x10002;
+
+        int ACTIVITY_START = 0x10003;
+
+        int ACTIVITY_RESULT = 0x10004;
+
+        int WECHAT_LOG = 0x10005;
     }
 
     interface ModuleId {
@@ -35,13 +43,11 @@ public interface Constant {
         int DEVELOP = 0x1002;
 
         int ABOUT = 0x1003;
-
-        int AUTO_LOGIN = 0x0004;
     }
 
     interface Color {
 
-        int BLUE = 0XFF66CCFF;
+        int BLUE = 0xFF393A3F;
     }
 
     interface Strings {
@@ -52,6 +58,14 @@ public interface Constant {
     interface Preference {
 
         String AUTO_LOGIN = "otherModule.autoLogin";
+
+        String ACTIVITY_CYCLE = "developModule.activityCycle";
+
+        String ACTIVITY_START = "developModule.activityStart";
+
+        String ACTIVITY_RESULT = "developModule.activityResult";
+
+        String WECHAT_LOG = "developModule.wechatLog";
     }
 
     interface Process {

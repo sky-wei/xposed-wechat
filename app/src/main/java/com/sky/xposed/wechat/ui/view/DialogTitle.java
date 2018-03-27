@@ -7,18 +7,15 @@ import android.graphics.drawable.StateListDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
-import com.sky.xposed.wechat.R;
+import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.ui.util.LayoutUtil;
 import com.sky.xposed.wechat.ui.util.ViewUtil;
 import com.sky.xposed.wechat.util.DisplayUtil;
@@ -48,7 +45,8 @@ public class DialogTitle extends FrameLayout implements View.OnClickListener {
         int height = DisplayUtil.dip2px(getContext(), 45);
 
         setLayoutParams(LayoutUtil.newViewGroupParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
-        setBackgroundColor(0xFF393A3F);
+//        setBackgroundColor(0xFF393A3F);
+        setBackgroundColor(Constant.Color.BLUE);
         setElevation(6);
 
         LinearLayout tLayout = new LinearLayout(getContext());

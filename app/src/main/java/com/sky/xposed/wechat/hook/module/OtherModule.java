@@ -58,7 +58,7 @@ public class OtherModule extends BaseModule {
 
         if (!autoLogin) {
             // 释放
-            if (mAutoLoginUnhook != null) mAutoLoginUnhook.unhook();
+            unhook(mAutoLoginUnhook);
             return ;
         }
 

@@ -12,7 +12,7 @@ public class MainEvent extends BaseEvent {
         super(id);
     }
 
-    public MainEvent(int id, boolean bValue) {
-        super(id, bValue);
+    public MainEvent(int id, boolean booleanValue) {
+        super(id, booleanValue);
     }
 }

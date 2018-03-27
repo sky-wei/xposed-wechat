@@ -12,7 +12,7 @@ public class MultiProEvent extends BaseEvent {
         super(id);
     }
 
-    public MultiProEvent(int id, boolean bValue) {
-        super(id, bValue);
+    public MultiProEvent(int id, boolean booleanValue) {
+        super(id, booleanValue);
     }
 }
