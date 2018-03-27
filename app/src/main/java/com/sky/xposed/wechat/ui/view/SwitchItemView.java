@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.sky.xposed.wechat.ui.util.LayoutUtil;
 import com.sky.xposed.wechat.util.DisplayUtil;
+import com.sky.xposed.wechat.util.ViewUtil;
 
 /**
  * Created by sky on 18-3-12.
@@ -48,6 +49,10 @@ public class SwitchItemView extends FrameLayout implements View.OnClickListener 
 
     private void initView() {
 
+        int left = DisplayUtil.dip2px(getContext(), 15);
+
+        setPadding(left, 0, left, 0);
+        setBackground(ViewUtil.newBackgroundDrawable());
         setLayoutParams(LayoutUtil.newViewGroupParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, DisplayUtil.dip2px(getContext(), 40)));
 
@@ -64,8 +69,6 @@ public class SwitchItemView extends FrameLayout implements View.OnClickListener 
         mSwitch.setClickable(false);
         mSwitch.setFocusable(false);
         mSwitch.setFocusableInTouchMode(false);
-
-        setName("测试");
 
         params = LayoutUtil.newWrapFrameLayoutParams();
         params.gravity = Gravity.CENTER_VERTICAL | Gravity.RIGHT;

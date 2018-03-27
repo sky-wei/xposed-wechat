@@ -40,6 +40,7 @@ public class CategoryItemView extends FrameLayout {
         tvName.setTextSize(15);
 
         FrameLayout.LayoutParams params = LayoutUtil.newWrapFrameLayoutParams();
+        params.leftMargin = DisplayUtil.dip2px(getContext(), 15);
         params.gravity = Gravity.CENTER_VERTICAL;
 
         addView(tvName, params);

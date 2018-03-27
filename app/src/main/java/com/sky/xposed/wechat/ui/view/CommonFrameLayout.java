@@ -44,11 +44,10 @@ public class CommonFrameLayout extends LinearLayout {
         ScrollView scrollView = new ScrollView(getContext());
         scrollView.setLayoutParams(LayoutUtil.newMatchLinearLayoutParams());
 
-        int left = DisplayUtil.dip2px(getContext(), 15);
         int top = DisplayUtil.dip2px(getContext(), 5);
 
         mContent = LayoutUtil.newCommonLayout(getContext());
-        mContent.setPadding(left, top, left, top);
+        mContent.setPadding(0, top, 0, top);
         scrollView.addView(mContent);
 
         addView(scrollView);

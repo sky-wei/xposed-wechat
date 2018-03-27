@@ -2,8 +2,6 @@ package com.sky.xposed.wechat.ui.view;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.StateListDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -14,6 +12,7 @@ import android.widget.TextView;
 
 import com.sky.xposed.wechat.ui.util.LayoutUtil;
 import com.sky.xposed.wechat.util.DisplayUtil;
+import com.sky.xposed.wechat.util.ViewUtil;
 
 /**
  * Created by sky on 18-3-11.
@@ -34,7 +33,7 @@ public class SimpleItemView extends FrameLayout {
     public SimpleItemView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        setBackground(newBackgroundDrawable());
+        setBackground(ViewUtil.newBackgroundDrawable());
         setLayoutParams(LayoutUtil.newViewGroupParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, DisplayUtil.dip2px(getContext(), 40)));
 
@@ -55,15 +54,5 @@ public class SimpleItemView extends FrameLayout {
 
     public String getName() {
         return tvName.getText().toString();
-    }
-
-    private StateListDrawable newBackgroundDrawable() {
-
-        StateListDrawable drawable = new StateListDrawable();
-
-        drawable.addState(new int[] { android.R.attr.state_pressed }, new ColorDrawable(0xffe5e5e5));
-        drawable.addState(new int[] {}, new ColorDrawable(Color.WHITE));
-
-        return drawable;
     }
 }
