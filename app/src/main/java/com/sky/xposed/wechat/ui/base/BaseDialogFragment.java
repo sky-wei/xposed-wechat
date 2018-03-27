@@ -65,4 +65,12 @@ public abstract class BaseDialogFragment extends DialogFragment {
     public PreferencesManager getPreferencesManager() {
         return HookManager.getInstance().getPreferencesManager();
     }
+
+    public boolean getBooleanValue(String key) {
+        return getPreferencesManager().getBoolean(key, false);
+    }
+
+    public void putBooleanValue(String key, boolean value) {
+        getPreferencesManager().putBoolean(key, value);
+    }
 }

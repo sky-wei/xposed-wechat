@@ -12,7 +12,7 @@ public class BackgroundEvent extends BaseEvent {
         super(id);
     }
 
-    public BackgroundEvent(int id, boolean bValue) {
-        super(id, bValue);
+    public BackgroundEvent(int id, boolean booleanValue) {
+        super(id, booleanValue);
     }
 }

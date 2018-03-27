@@ -1,7 +1,6 @@
 package com.sky.xposed.wechat.hook.base;
 
 import android.content.Context;
-import android.content.Intent;
 
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.data.PreferencesManager;
@@ -10,8 +9,7 @@ import com.sky.xposed.wechat.hook.event.BackgroundEvent;
 import com.sky.xposed.wechat.hook.event.MainEvent;
 import com.sky.xposed.wechat.hook.event.MultiProEvent;
 import com.sky.xposed.wechat.hook.module.Module;
-
-import org.greenrobot.eventbus.EventBus;
+import com.sky.xposed.wechat.util.EventUtil;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
@@ -100,20 +98,19 @@ public abstract class BaseModule implements Module {
     }
 
     public void postEvent(BaseEvent event) {
-
-        if (event == null) return ;
-
-        EventBus.getDefault().post(event);
+        EventUtil.postEvent(event);
     }
 
     public void postMultiProgressEvent(MultiProEvent event) {
+        EventUtil.postMultiProgressEvent(getContext(), event);
+    }
 
-        if (event == null) return ;
+    public boolean getBooleanValue(String key) {
+        return getPreferencesManager().getBoolean(key, false);
+    }
 
-        Intent intent = new Intent(Constant.Action.HOOK_EVENT);
-        intent.putExtra(Constant.Key.DATA, event);
-
-        getContext().sendBroadcast(intent);
+    public void putBooleanValue(String key, boolean value) {
+        getPreferencesManager().putBoolean(key, value);
     }
 
     public String getProcessName() {

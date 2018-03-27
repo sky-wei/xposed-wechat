@@ -6,6 +6,7 @@ import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.hook.base.BaseModule;
 import com.sky.xposed.wechat.hook.event.BackgroundEvent;
 import com.sky.xposed.wechat.util.Alog;
+import com.sky.xposed.wechat.util.EventUtil;
 import com.sky.xposed.wechat.util.FindUtil;
 
 import java.lang.reflect.Field;
@@ -36,8 +37,8 @@ public class OtherModule extends BaseModule {
 
         if (isMainProcess()) {
             // 发送事件
-            postEvent(new BackgroundEvent(Constant.EventId.AUTO_LOGIN,
-                    getPreferencesManager().getBoolean(Constant.Preference.AUTO_LOGIN, false)));
+            EventUtil.postBackgroundEvent(Constant.EventId.AUTO_LOGIN,
+                    getBooleanValue(Constant.Preference.AUTO_LOGIN));
         }
     }
 
@@ -54,8 +55,6 @@ public class OtherModule extends BaseModule {
     }
 
     private void handlerAutoLogin(boolean autoLogin) {
-
-        Alog.d(">>>>>>>>>>>>>>>>>>>>>>>  cccc " + autoLogin);
 
         if (!autoLogin) {
             // 释放

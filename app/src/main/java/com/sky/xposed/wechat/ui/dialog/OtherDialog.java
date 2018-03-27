@@ -6,13 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sky.xposed.wechat.Constant;
-import com.sky.xposed.wechat.hook.event.BackgroundEvent;
 import com.sky.xposed.wechat.ui.base.BaseDialogFragment;
 import com.sky.xposed.wechat.ui.view.CommonFrameLayout;
 import com.sky.xposed.wechat.ui.view.DialogTitle;
 import com.sky.xposed.wechat.ui.view.SwitchItemView;
-
-import org.greenrobot.eventbus.EventBus;
+import com.sky.xposed.wechat.util.EventUtil;
 
 /**
  * Created by sky on 18-3-12.
@@ -50,8 +48,8 @@ public class OtherDialog extends BaseDialogFragment
         mDialogTitle.setOnTitleEventListener(this);
 
         // 恢复状态
-        sivPcAutoLogin.setChecked(getPreferencesManager()
-                .getBoolean(Constant.Preference.AUTO_LOGIN, false));
+        sivPcAutoLogin.setChecked(
+                getBooleanValue(Constant.Preference.AUTO_LOGIN));
     }
 
     @Override
@@ -67,9 +65,7 @@ public class OtherDialog extends BaseDialogFragment
     @Override
     public void onCheckedChanged(View view, boolean isChecked) {
         // 保存状态值
-        getPreferencesManager()
-                .putBoolean(Constant.Preference.AUTO_LOGIN, isChecked);
-        EventBus.getDefault().post(
-                new BackgroundEvent(Constant.EventId.AUTO_LOGIN, isChecked));
+        putBooleanValue(Constant.Preference.AUTO_LOGIN, isChecked);
+        EventUtil.postBackgroundEvent(Constant.EventId.AUTO_LOGIN, isChecked);
     }
 }
