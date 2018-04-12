@@ -52,7 +52,7 @@ public interface Constant {
 
     interface Strings {
 
-        String TITLE = "WeBlue";
+        String TITLE = "WeCat";
     }
 
     interface Preference {

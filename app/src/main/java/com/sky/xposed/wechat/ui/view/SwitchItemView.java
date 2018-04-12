@@ -1,6 +1,7 @@
 package com.sky.xposed.wechat.ui.view;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.sky.xposed.wechat.ui.interfaces.BindPreferences;
 import com.sky.xposed.wechat.ui.util.LayoutUtil;
 import com.sky.xposed.wechat.util.DisplayUtil;
 import com.sky.xposed.wechat.util.ViewUtil;
@@ -20,7 +22,7 @@ import com.sky.xposed.wechat.util.ViewUtil;
  * Created by sky on 18-3-12.
  */
 
-public class SwitchItemView extends FrameLayout implements View.OnClickListener {
+public class SwitchItemView extends FrameLayout implements View.OnClickListener, BindPreferences<Boolean> {
 
     private TextView tvName;
     private Switch mSwitch;
@@ -100,6 +102,20 @@ public class SwitchItemView extends FrameLayout implements View.OnClickListener 
 
         if (mOnCheckedChangeListener != null)
             mOnCheckedChangeListener.onCheckedChanged(this, isChecked());
+    }
+
+    @Override
+    public void bind(final SharedPreferences preferences, final String key, Boolean defValue, final ValueChangeListener<Boolean> listener) {
+
+        // 设置状态
+        setChecked(preferences.getBoolean(key, defValue));
+        setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(View view, boolean isChecked) {
+                preferences.edit().putBoolean(key, isChecked);
+                listener.onValueChange(key, isChecked);
+            }
+        });
     }
 
     public interface OnCheckedChangeListener {
