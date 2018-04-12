@@ -13,7 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.sky.xposed.wechat.ui.interfaces.BindPreferences;
+import com.sky.xposed.wechat.ui.interfaces.TrackViewStatus;
 import com.sky.xposed.wechat.ui.util.LayoutUtil;
 import com.sky.xposed.wechat.util.DisplayUtil;
 import com.sky.xposed.wechat.util.ViewUtil;
@@ -22,7 +22,7 @@ import com.sky.xposed.wechat.util.ViewUtil;
  * Created by sky on 18-3-12.
  */
 
-public class SwitchItemView extends FrameLayout implements View.OnClickListener, BindPreferences<Boolean> {
+public class SwitchItemView extends FrameLayout implements View.OnClickListener, TrackViewStatus<Boolean> {
 
     private TextView tvName;
     private Switch mSwitch;
@@ -105,15 +105,16 @@ public class SwitchItemView extends FrameLayout implements View.OnClickListener,
     }
 
     @Override
-    public void bind(final SharedPreferences preferences, final String key, Boolean defValue, final ValueChangeListener<Boolean> listener) {
-
+    public void bind(final SharedPreferences preferences,
+                     final String key, Boolean defValue, final StatusChangeListener<Boolean> listener) {
         // 设置状态
         setChecked(preferences.getBoolean(key, defValue));
         setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(View view, boolean isChecked) {
-                preferences.edit().putBoolean(key, isChecked);
-                listener.onValueChange(key, isChecked);
+                // 保存状态信息
+                preferences.edit().putBoolean(key, isChecked).apply();
+                listener.onStatusChange(view, key, isChecked);
             }
         });
     }

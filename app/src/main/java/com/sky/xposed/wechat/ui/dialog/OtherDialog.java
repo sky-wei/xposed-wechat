@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.ui.base.BaseDialogFragment;
+import com.sky.xposed.wechat.ui.interfaces.TrackViewStatus;
 import com.sky.xposed.wechat.ui.view.CommonFrameLayout;
 import com.sky.xposed.wechat.ui.view.DialogTitle;
 import com.sky.xposed.wechat.ui.view.SwitchItemView;
@@ -17,7 +18,7 @@ import com.sky.xposed.wechat.util.EventUtil;
  */
 
 public class OtherDialog extends BaseDialogFragment
-        implements DialogTitle.OnTitleEventListener, SwitchItemView.OnCheckedChangeListener {
+        implements DialogTitle.OnTitleEventListener, TrackViewStatus.StatusChangeListener<Boolean> {
 
     private DialogTitle mDialogTitle;
     private CommonFrameLayout mCommonFrameLayout;
@@ -33,7 +34,6 @@ public class OtherDialog extends BaseDialogFragment
 
         sivPcAutoLogin = new SwitchItemView(getContext());
         sivPcAutoLogin.setName("扫描自动登录");
-        sivPcAutoLogin.setOnCheckedChangeListener(this);
 
         mCommonFrameLayout.addContent(sivPcAutoLogin);
 
@@ -47,9 +47,7 @@ public class OtherDialog extends BaseDialogFragment
         mDialogTitle.showClose();
         mDialogTitle.setOnTitleEventListener(this);
 
-        // 恢复状态
-        sivPcAutoLogin.setChecked(
-                getBooleanValue(Constant.Preference.AUTO_LOGIN));
+        trackBind(sivPcAutoLogin, Constant.Preference.AUTO_LOGIN, false, this);
     }
 
     @Override
@@ -63,9 +61,8 @@ public class OtherDialog extends BaseDialogFragment
     }
 
     @Override
-    public void onCheckedChanged(View view, boolean isChecked) {
-        // 保存状态值
-        putBooleanValue(Constant.Preference.AUTO_LOGIN, isChecked);
-        EventUtil.postBackgroundEvent(Constant.EventId.AUTO_LOGIN, isChecked);
+    public boolean onStatusChange(View view, String key, Boolean value) {
+        EventUtil.postBackgroundEvent(Constant.EventId.AUTO_LOGIN, value);
+        return false;
     }
 }

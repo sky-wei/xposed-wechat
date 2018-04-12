@@ -6,7 +6,7 @@ import android.util.SparseArray;
 
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.config.ConfigManager;
-import com.sky.xposed.wechat.data.PreferencesManager;
+import com.sky.xposed.wechat.data.CachePreferences;
 import com.sky.xposed.wechat.hook.event.BackgroundEvent;
 import com.sky.xposed.wechat.hook.event.MainEvent;
 import com.sky.xposed.wechat.hook.event.MultiProEvent;
@@ -21,6 +21,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 /**
@@ -34,12 +37,11 @@ public class HookManager implements ReceiverHelper.ReceiverCallback {
     private Context mContext;
     private XC_LoadPackage.LoadPackageParam mLoadPackageParam;
     private ConfigManager mConfigManager;
-    private PreferencesManager mPreferencesManager;
+    private CachePreferences mCachePreferences;
     private ReceiverHelper mReceiverHelper;
     private SparseArray<Module> mHookModules = new SparseArray<>();
 
     private HookManager() {
-
     }
 
     public static HookManager getInstance() {
@@ -55,8 +57,9 @@ public class HookManager implements ReceiverHelper.ReceiverCallback {
         mContext = context;
         mLoadPackageParam = param;
         mConfigManager = configManager;
-        mPreferencesManager = new PreferencesManager(context);
-        mReceiverHelper = new ReceiverHelper(context, this, Constant.Action.HOOK_EVENT);
+        mCachePreferences = new CachePreferences(context, Constant.Name.WE_CAT);
+        mReceiverHelper = new ReceiverHelper(context, this,
+                Constant.Action.HOOK_EVENT, Constant.Action.REFRESH_VALUE);
 
         // 注册事件
         EventBus.getDefault().register(this);
@@ -108,6 +111,8 @@ public class HookManager implements ReceiverHelper.ReceiverCallback {
             // 处理数据
             onMultiProgressEvent((MultiProEvent)
                     intent.getSerializableExtra(Constant.Key.DATA));
+        } else if (Constant.Action.REFRESH_VALUE.equals(action)) {
+
         }
     }
 
@@ -130,8 +135,8 @@ public class HookManager implements ReceiverHelper.ReceiverCallback {
         return mConfigManager;
     }
 
-    public PreferencesManager getPreferencesManager() {
-        return mPreferencesManager;
+    public CachePreferences getCachePreferences() {
+        return mCachePreferences;
     }
 
     private void initModule() {

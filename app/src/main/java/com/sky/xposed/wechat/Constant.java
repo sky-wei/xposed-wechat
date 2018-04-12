@@ -87,11 +87,18 @@ public interface Constant {
 
     interface Action {
 
-        String HOOK_EVENT = "com.sky.xposed.wechat.ACTION_HOOK_EVENT";
+        String REFRESH_VALUE = BuildConfig.APPLICATION_ID + ".ACTION_REFRESH_VALUE";
+
+        String HOOK_EVENT = BuildConfig.APPLICATION_ID + ".ACTION_HOOK_EVENT";
     }
 
     interface Key {
 
         String DATA = "data";
+    }
+
+    interface Name {
+
+        String WE_CAT = "weCat";
     }
 }

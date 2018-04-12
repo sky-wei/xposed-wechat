@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.hook.event.MultiProEvent;
 import com.sky.xposed.wechat.ui.base.BaseDialogFragment;
+import com.sky.xposed.wechat.ui.interfaces.TrackViewStatus;
 import com.sky.xposed.wechat.ui.view.CategoryItemView;
 import com.sky.xposed.wechat.ui.view.CommonFrameLayout;
 import com.sky.xposed.wechat.ui.view.DialogTitle;
@@ -19,7 +20,7 @@ import com.sky.xposed.wechat.util.EventUtil;
  */
 
 public class DevelopDialog extends BaseDialogFragment implements
-        DialogTitle.OnTitleEventListener, SwitchItemView.OnCheckedChangeListener {
+        DialogTitle.OnTitleEventListener, TrackViewStatus.StatusChangeListener<Boolean> {
 
     private DialogTitle mDialogTitle;
     private CommonFrameLayout mCommonFrameLayout;
@@ -67,20 +68,11 @@ public class DevelopDialog extends BaseDialogFragment implements
         mDialogTitle.showClose();
         mDialogTitle.setOnTitleEventListener(this);
 
-        sivWechatLog.setOnCheckedChangeListener(this);
-        sivActivity.setOnCheckedChangeListener(this);
-        sivStartActivity.setOnCheckedChangeListener(this);
-        sivActivityResult.setOnCheckedChangeListener(this);
-
-        // 恢复状态
-        sivWechatLog.setChecked(
-                getBooleanValue(Constant.Preference.WECHAT_LOG));
-        sivActivity.setChecked(
-                getBooleanValue(Constant.Preference.ACTIVITY_CYCLE));
-        sivStartActivity.setChecked(
-                getBooleanValue(Constant.Preference.ACTIVITY_START));
-        sivActivityResult.setChecked(
-                getBooleanValue(Constant.Preference.ACTIVITY_RESULT));
+        // 绑定事件
+        trackBind(sivWechatLog, Constant.Preference.WECHAT_LOG, false, this);
+        trackBind(sivActivity, Constant.Preference.ACTIVITY_CYCLE, false, this);
+        trackBind(sivStartActivity, Constant.Preference.ACTIVITY_START, false, this);
+        trackBind(sivActivityResult, Constant.Preference.ACTIVITY_RESULT, false, this);
     }
 
     @Override
@@ -94,24 +86,21 @@ public class DevelopDialog extends BaseDialogFragment implements
     }
 
     @Override
-    public void onCheckedChanged(View view, boolean isChecked) {
+    public boolean onStatusChange(View view, String key, Boolean value) {
 
         if (view == sivWechatLog) {
             // 保存状态值
-            putBooleanValue(Constant.Preference.WECHAT_LOG, isChecked);
-            EventUtil.postMultiProgressEvent(getContext(), new MultiProEvent(Constant.EventId.WECHAT_LOG, isChecked));
+            EventUtil.postMultiProgressEvent(getContext(), new MultiProEvent(Constant.EventId.WECHAT_LOG, value));
         } else if (view == sivActivity) {
             // 保存状态值
-            putBooleanValue(Constant.Preference.ACTIVITY_CYCLE, isChecked);
-            EventUtil.postBackgroundEvent(Constant.EventId.ACTIVITY_CYCLE, isChecked);
+            EventUtil.postBackgroundEvent(Constant.EventId.ACTIVITY_CYCLE, value);
         } else if (view == sivStartActivity) {
             // 保存状态值
-            putBooleanValue(Constant.Preference.ACTIVITY_START, isChecked);
-            EventUtil.postBackgroundEvent(Constant.EventId.ACTIVITY_START, isChecked);
+            EventUtil.postBackgroundEvent(Constant.EventId.ACTIVITY_START, value);
         } else if (view == sivActivityResult) {
             // 保存状态值
-            putBooleanValue(Constant.Preference.ACTIVITY_RESULT, isChecked);
-            EventUtil.postBackgroundEvent(Constant.EventId.ACTIVITY_RESULT, isChecked);
+            EventUtil.postBackgroundEvent(Constant.EventId.ACTIVITY_RESULT, value);
         }
+        return true;
     }
 }

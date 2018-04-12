@@ -2,14 +2,17 @@ package com.sky.xposed.wechat.ui.base;
 
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.data.PreferencesManager;
 import com.sky.xposed.wechat.hook.HookManager;
+import com.sky.xposed.wechat.ui.interfaces.TrackViewStatus;
 
 /**
  * Created by sky on 18-3-11.
@@ -62,15 +65,15 @@ public abstract class BaseDialogFragment extends DialogFragment {
         return getActivity().getApplicationContext();
     }
 
-    public PreferencesManager getPreferencesManager() {
-        return HookManager.getInstance().getPreferencesManager();
+    public SharedPreferences getSharedPreferences(String name) {
+        return getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
     }
 
-    public boolean getBooleanValue(String key) {
-        return getPreferencesManager().getBoolean(key, false);
+    public SharedPreferences getDefaultSharedPreferences() {
+        return getSharedPreferences(Constant.Name.WE_CAT);
     }
 
-    public void putBooleanValue(String key, boolean value) {
-        getPreferencesManager().putBoolean(key, value);
+    public <T> void trackBind(TrackViewStatus<T> track, String key, T defValue, TrackViewStatus.StatusChangeListener<T> listener) {
+        track.bind(getDefaultSharedPreferences(), key, defValue, listener);
     }
 }
