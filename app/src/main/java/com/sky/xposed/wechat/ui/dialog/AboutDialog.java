@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.sky.xposed.wechat.BuildConfig;
 import com.sky.xposed.wechat.Constant;
-import com.sky.xposed.wechat.ui.base.BaseDialogFragment;
+import com.sky.xposed.wechat.ui.base.BaseDialog;
 import com.sky.xposed.wechat.ui.util.ActivityUtil;
 import com.sky.xposed.wechat.util.DisplayUtil;
 
@@ -23,7 +23,7 @@ import com.sky.xposed.wechat.util.DisplayUtil;
  * Created by sky on 18-3-12.
  */
 
-public class AboutDialog extends BaseDialogFragment implements View.OnClickListener {
+public class AboutDialog extends BaseDialog implements View.OnClickListener {
 
     private TextView tvVersion;
     private TextView tvSource;

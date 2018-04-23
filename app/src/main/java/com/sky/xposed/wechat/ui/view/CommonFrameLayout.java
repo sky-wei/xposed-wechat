@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.sky.xposed.wechat.ui.util.LayoutUtil;
+import com.sky.xposed.wechat.ui.util.ViewUtil;
 import com.sky.xposed.wechat.util.DisplayUtil;
 
 /**
@@ -20,7 +21,7 @@ import com.sky.xposed.wechat.util.DisplayUtil;
 public class CommonFrameLayout extends LinearLayout {
 
     private LinearLayout mContent;
-    private DialogTitle mDialogTitle;
+    private TitleView mTitleView;
 
     public CommonFrameLayout(@NonNull Context context) {
         this(context, null);
@@ -38,8 +39,8 @@ public class CommonFrameLayout extends LinearLayout {
         setLayoutParams(LayoutUtil.newMatchLinearLayoutParams());
 
         // 添加标题
-        mDialogTitle = new DialogTitle(getContext());
-        addView(mDialogTitle);
+        mTitleView = new TitleView(getContext());
+        addView(mTitleView);
 
         ScrollView scrollView = new ScrollView(getContext());
         scrollView.setLayoutParams(LayoutUtil.newMatchLinearLayoutParams());
@@ -53,16 +54,21 @@ public class CommonFrameLayout extends LinearLayout {
         addView(scrollView);
     }
 
-    public DialogTitle getDialogTitle() {
-        return mDialogTitle;
+    public TitleView getDialogTitle() {
+        return mTitleView;
     }
 
     public void setTitle(String title) {
-        mDialogTitle.setTitle(title);
+        mTitleView.setTitle(title);
     }
 
     public void addContent(View child) {
+        addContent(child, false);
+    }
+
+    public void addContent(View child, boolean line) {
         mContent.addView(child);
+        if (line) mContent.addView(ViewUtil.newLineView(getContext()));
     }
 
     public void addContent(View child, ViewGroup.LayoutParams params) {

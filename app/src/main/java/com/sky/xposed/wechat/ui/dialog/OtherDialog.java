@@ -1,15 +1,12 @@
 package com.sky.xposed.wechat.ui.dialog;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.sky.xposed.wechat.Constant;
-import com.sky.xposed.wechat.ui.base.BaseDialogFragment;
 import com.sky.xposed.wechat.ui.interfaces.TrackViewStatus;
+import com.sky.xposed.wechat.ui.util.ViewUtil;
 import com.sky.xposed.wechat.ui.view.CommonFrameLayout;
-import com.sky.xposed.wechat.ui.view.DialogTitle;
 import com.sky.xposed.wechat.ui.view.SwitchItemView;
 import com.sky.xposed.wechat.util.EventUtil;
 
@@ -17,52 +14,35 @@ import com.sky.xposed.wechat.util.EventUtil;
  * Created by sky on 18-3-12.
  */
 
-public class OtherDialog extends BaseDialogFragment
-        implements DialogTitle.OnTitleEventListener, TrackViewStatus.StatusChangeListener<Boolean> {
-
-    private DialogTitle mDialogTitle;
-    private CommonFrameLayout mCommonFrameLayout;
+public class OtherDialog extends CommonDialog
+        implements TrackViewStatus.StatusChangeListener<Boolean> {
 
     private SwitchItemView sivPcAutoLogin;
 
-
     @Override
-    protected View createView(LayoutInflater inflater, ViewGroup container) {
+    protected void createView(CommonFrameLayout view) {
+        super.createView(view);
 
-        mCommonFrameLayout = new CommonFrameLayout(getContext());
-        mDialogTitle = mCommonFrameLayout.getDialogTitle();
+        sivPcAutoLogin = ViewUtil.newSwitchItemView(getContext(), "扫描自动登录");
 
-        sivPcAutoLogin = new SwitchItemView(getContext());
-        sivPcAutoLogin.setName("扫描自动登录");
-
-        mCommonFrameLayout.addContent(sivPcAutoLogin);
-
-        return mCommonFrameLayout;
+        view.addContent(sivPcAutoLogin);
     }
 
     @Override
     protected void initView(View view, Bundle args) {
+        super.initView(view, args);
 
-        mDialogTitle.setTitle("其他设置");
-        mDialogTitle.showClose();
-        mDialogTitle.setOnTitleEventListener(this);
+        setTitle("其他设置");
+        getTitleView().showClose();
 
+        // 绑定事件
         trackBind(sivPcAutoLogin, Constant.Preference.AUTO_LOGIN, false, this);
     }
 
     @Override
-    public void onCloseEvent(View view) {
-        // 关闭界面
-        dismiss();
-    }
-
-    @Override
-    public void onMoreEvent(View view) {
-    }
-
-    @Override
     public boolean onStatusChange(View view, String key, Boolean value) {
-        EventUtil.postBackgroundEvent(Constant.EventId.AUTO_LOGIN, value);
-        return false;
+        // 发送修改值的广播
+        EventUtil.postModifyValue(getContext(), key, value);
+        return true;
     }
 }

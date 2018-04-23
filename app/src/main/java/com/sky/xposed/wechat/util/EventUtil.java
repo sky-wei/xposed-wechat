@@ -4,11 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.sky.xposed.wechat.Constant;
+import com.sky.xposed.wechat.data.model.Pair;
 import com.sky.xposed.wechat.hook.base.BaseEvent;
 import com.sky.xposed.wechat.hook.event.BackgroundEvent;
 import com.sky.xposed.wechat.hook.event.MultiProEvent;
+import com.sky.xposed.wechat.ui.helper.ReceiverHelper;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by sky on 18-3-27.
@@ -41,5 +47,22 @@ public class EventUtil {
         } catch (Throwable tr) {
             Alog.e("发送广播异常", tr);
         }
+    }
+
+    public static void postModifyValue(Context context, String key, Object value) {
+        postModifyValue(context, new Pair<>(key, value));
+    }
+
+    public static void postModifyValue(Context context, Pair<String, Object>... pairs) {
+
+        if (context == null || pairs == null) return;
+
+        List<Pair<String, Object>> data = Arrays.asList(pairs);
+
+        Intent intent = new Intent(Constant.Action.REFRESH_VALUE);
+        intent.putExtra(Constant.Key.DATA, (Serializable) data);
+
+        // 发送广播
+        ReceiverHelper.sendBroadcastReceiver(context, intent);
     }
 }

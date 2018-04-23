@@ -1,9 +1,17 @@
 package com.sky.xposed.wechat.ui.util;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.sky.xposed.wechat.ui.view.CategoryItemView;
+import com.sky.xposed.wechat.ui.view.SwitchItemView;
 
 /**
  * Created by starrysky on 16-8-2.
@@ -66,5 +74,40 @@ public class ViewUtil {
         }
 
         return (scrollY > 0) || (scrollY < scrollDifference - 1);
+    }
+
+    public static StateListDrawable newBackgroundDrawable() {
+
+        StateListDrawable drawable = new StateListDrawable();
+
+        drawable.addState(new int[] { android.R.attr.state_pressed }, new ColorDrawable(0xffe5e5e5));
+        drawable.addState(new int[] {}, new ColorDrawable(Color.WHITE));
+
+        return drawable;
+    }
+
+    public static View newLineView(Context context) {
+
+        View lineView = new View(context);
+        lineView.setBackgroundColor(0xFFDFDFDF);
+        lineView.setLayoutParams(LayoutUtil.newViewGroupParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, 2));
+        return lineView;
+    }
+
+    public static SwitchItemView newSwitchItemView(Context context, String name) {
+
+        SwitchItemView itemView = new SwitchItemView(context);
+        itemView.setName(name);
+
+        return itemView;
+    }
+
+    public static CategoryItemView newCategoryItemView(Context context, String name) {
+
+        CategoryItemView itemView = new CategoryItemView(context);
+        itemView.setName(name);
+
+        return itemView;
     }
 }

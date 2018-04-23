@@ -3,7 +3,7 @@ package com.sky.xposed.wechat.hook.base;
 import android.content.Context;
 
 import com.sky.xposed.wechat.Constant;
-import com.sky.xposed.wechat.data.PreferencesManager;
+import com.sky.xposed.wechat.data.CachePreferences;
 import com.sky.xposed.wechat.hook.HookManager;
 import com.sky.xposed.wechat.hook.event.BackgroundEvent;
 import com.sky.xposed.wechat.hook.event.MainEvent;
@@ -23,7 +23,7 @@ public abstract class BaseModule implements Module {
 
     private HookManager mHookManager;
     private Context mContext;
-    private PreferencesManager mPreferencesManager;
+    private CachePreferences mCachePreferences;
     private XC_LoadPackage.LoadPackageParam mLoadPackageParam;
 //    private SparseArray<Module> mHookModules = new SparseArray<>();
 
@@ -31,7 +31,7 @@ public abstract class BaseModule implements Module {
     public void initialization(HookManager hookManager) {
         mHookManager = hookManager;
         mContext = hookManager.getContext();
-        mPreferencesManager = hookManager.getPreferencesManager();
+        mCachePreferences = hookManager.getCachePreferences();
         mLoadPackageParam = hookManager.getLoadPackageParam();
     }
 
@@ -106,11 +106,11 @@ public abstract class BaseModule implements Module {
     }
 
     public boolean getBooleanValue(String key) {
-        return getPreferencesManager().getBoolean(key, false);
+        return getCachePreferences().getBoolean(key, false);
     }
 
     public void putBooleanValue(String key, boolean value) {
-        getPreferencesManager().putBoolean(key, value);
+        getCachePreferences().putBoolean(key, value);
     }
 
     public String getProcessName() {
@@ -147,12 +147,16 @@ public abstract class BaseModule implements Module {
         return mContext;
     }
 
+    public HookManager getHookManager() {
+        return mHookManager;
+    }
+
     public XC_LoadPackage.LoadPackageParam getLoadPackageParam() {
         return mLoadPackageParam;
     }
 
-    public PreferencesManager getPreferencesManager() {
-        return mPreferencesManager;
+    public CachePreferences getCachePreferences() {
+        return mCachePreferences;
     }
 
     public Class findClass(String className) {

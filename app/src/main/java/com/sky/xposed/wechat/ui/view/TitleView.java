@@ -24,22 +24,22 @@ import com.sky.xposed.wechat.util.DisplayUtil;
  * Created by sky on 18-3-11.
  */
 
-public class DialogTitle extends FrameLayout implements View.OnClickListener {
+public class TitleView extends FrameLayout implements View.OnClickListener {
 
     private ImageButton ivClose;
     private TextView tvTitle;
     private ImageButton ivMore;
     private OnTitleEventListener mOnTitleEventListener;
 
-    public DialogTitle(@NonNull Context context) {
+    public TitleView(@NonNull Context context) {
         this(context, null);
     }
 
-    public DialogTitle(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public TitleView(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public DialogTitle(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public TitleView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         int height = DisplayUtil.dip2px(getContext(), 45);

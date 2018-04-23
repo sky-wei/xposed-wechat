@@ -1,17 +1,12 @@
 package com.sky.xposed.wechat.ui.dialog;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.sky.xposed.wechat.Constant;
-import com.sky.xposed.wechat.hook.event.MultiProEvent;
-import com.sky.xposed.wechat.ui.base.BaseDialogFragment;
 import com.sky.xposed.wechat.ui.interfaces.TrackViewStatus;
-import com.sky.xposed.wechat.ui.view.CategoryItemView;
+import com.sky.xposed.wechat.ui.util.ViewUtil;
 import com.sky.xposed.wechat.ui.view.CommonFrameLayout;
-import com.sky.xposed.wechat.ui.view.DialogTitle;
 import com.sky.xposed.wechat.ui.view.SwitchItemView;
 import com.sky.xposed.wechat.util.EventUtil;
 
@@ -19,11 +14,8 @@ import com.sky.xposed.wechat.util.EventUtil;
  * Created by sky on 18-3-12.
  */
 
-public class DevelopDialog extends BaseDialogFragment implements
-        DialogTitle.OnTitleEventListener, TrackViewStatus.StatusChangeListener<Boolean> {
-
-    private DialogTitle mDialogTitle;
-    private CommonFrameLayout mCommonFrameLayout;
+public class DevelopDialog extends CommonDialog
+        implements TrackViewStatus.StatusChangeListener<Boolean> {
 
     private SwitchItemView sivWechatLog;
     private SwitchItemView sivActivity;
@@ -31,42 +23,30 @@ public class DevelopDialog extends BaseDialogFragment implements
     private SwitchItemView sivActivityResult;
 
     @Override
-    protected View createView(LayoutInflater inflater, ViewGroup container) {
+    protected void createView(CommonFrameLayout view) {
+        super.createView(view);
 
-        mCommonFrameLayout = new CommonFrameLayout(getContext());
-        mDialogTitle = mCommonFrameLayout.getDialogTitle();
+        sivWechatLog = ViewUtil.newSwitchItemView(getContext(), "打印微信日志");
 
-        sivWechatLog = new SwitchItemView(getContext());
-        sivWechatLog.setName("打印微信日志");
+        view.addContent(sivWechatLog);
 
-        mCommonFrameLayout.addContent(sivWechatLog);
+        view.addContent(
+                ViewUtil.newCategoryItemView(getContext(), "Activity"));
+        sivActivity = ViewUtil.newSwitchItemView(getContext(), "打印Activity生命周期");
+        sivStartActivity = ViewUtil.newSwitchItemView(getContext(), "打印Activity启动参数");
+        sivActivityResult = ViewUtil.newSwitchItemView(getContext(), "打印Activity返回结果");
 
-        CategoryItemView categoryItemView = new CategoryItemView(getContext());
-        categoryItemView.setName("Activity");
-        mCommonFrameLayout.addContent(categoryItemView);
-
-        sivActivity = new SwitchItemView(getContext());
-        sivActivity.setName("打印Activity生命周期");
-
-        sivStartActivity = new SwitchItemView(getContext());
-        sivStartActivity.setName("打印Activity启动参数");
-
-        sivActivityResult = new SwitchItemView(getContext());
-        sivActivityResult.setName("打印Activity返回结果");
-
-        mCommonFrameLayout.addContent(sivActivity);
-        mCommonFrameLayout.addContent(sivStartActivity);
-        mCommonFrameLayout.addContent(sivActivityResult);
-
-        return mCommonFrameLayout;
+        view.addContent(sivActivity, true);
+        view.addContent(sivStartActivity, true);
+        view.addContent(sivActivityResult);
     }
 
     @Override
     protected void initView(View view, Bundle args) {
+        super.initView(view, args);
 
-        mDialogTitle.setTitle("开发设置");
-        mDialogTitle.showClose();
-        mDialogTitle.setOnTitleEventListener(this);
+        setTitle("开发设置");
+        getTitleView().showClose();
 
         // 绑定事件
         trackBind(sivWechatLog, Constant.Preference.WECHAT_LOG, false, this);
@@ -76,31 +56,9 @@ public class DevelopDialog extends BaseDialogFragment implements
     }
 
     @Override
-    public void onCloseEvent(View view) {
-        // 关闭界面
-        dismiss();
-    }
-
-    @Override
-    public void onMoreEvent(View view) {
-    }
-
-    @Override
     public boolean onStatusChange(View view, String key, Boolean value) {
-
-        if (view == sivWechatLog) {
-            // 保存状态值
-            EventUtil.postMultiProgressEvent(getContext(), new MultiProEvent(Constant.EventId.WECHAT_LOG, value));
-        } else if (view == sivActivity) {
-            // 保存状态值
-            EventUtil.postBackgroundEvent(Constant.EventId.ACTIVITY_CYCLE, value);
-        } else if (view == sivStartActivity) {
-            // 保存状态值
-            EventUtil.postBackgroundEvent(Constant.EventId.ACTIVITY_START, value);
-        } else if (view == sivActivityResult) {
-            // 保存状态值
-            EventUtil.postBackgroundEvent(Constant.EventId.ACTIVITY_RESULT, value);
-        }
+        // 发送修改值的广播
+        EventUtil.postModifyValue(getContext(), key, value);
         return true;
     }
 }

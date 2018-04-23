@@ -15,8 +15,8 @@ import android.widget.TextView;
 
 import com.sky.xposed.wechat.ui.interfaces.TrackViewStatus;
 import com.sky.xposed.wechat.ui.util.LayoutUtil;
+import com.sky.xposed.wechat.ui.util.ViewUtil;
 import com.sky.xposed.wechat.util.DisplayUtil;
-import com.sky.xposed.wechat.util.ViewUtil;
 
 /**
  * Created by sky on 18-3-12.

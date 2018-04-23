@@ -10,15 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sky.xposed.wechat.Constant;
-import com.sky.xposed.wechat.data.PreferencesManager;
-import com.sky.xposed.wechat.hook.HookManager;
 import com.sky.xposed.wechat.ui.interfaces.TrackViewStatus;
 
 /**
  * Created by sky on 18-3-11.
  */
 
-public abstract class BaseDialogFragment extends DialogFragment {
+public abstract class BaseDialog extends DialogFragment {
 
     @Nullable
     @Override
