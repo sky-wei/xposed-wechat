@@ -8,7 +8,7 @@ import com.sky.xposed.wechat.ui.interfaces.TrackViewStatus;
 import com.sky.xposed.wechat.ui.util.ViewUtil;
 import com.sky.xposed.wechat.ui.view.CommonFrameLayout;
 import com.sky.xposed.wechat.ui.view.SwitchItemView;
-import com.sky.xposed.wechat.util.EventUtil;
+import com.sky.xposed.wechat.util.ReceiverUtil;
 
 /**
  * Created by sky on 18-3-12.
@@ -58,7 +58,7 @@ public class DevelopDialog extends CommonDialog
     @Override
     public boolean onStatusChange(View view, String key, Boolean value) {
         // 发送修改值的广播
-        EventUtil.postModifyValue(getContext(), key, value);
+        ReceiverUtil.postStatusChange(getContext(), key, value);
         return true;
     }
 }

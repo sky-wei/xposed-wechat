@@ -21,19 +21,6 @@ public interface Constant {
         int CLICK = 0x01;
     }
 
-    interface EventId {
-
-        int AUTO_LOGIN = 0x10001;
-
-        int ACTIVITY_CYCLE = 0x10002;
-
-        int ACTIVITY_START = 0x10003;
-
-        int ACTIVITY_RESULT = 0x10004;
-
-        int WECHAT_LOG = 0x10005;
-    }
-
     interface ModuleId {
 
         int MAIN = 0x0000;
@@ -57,15 +44,17 @@ public interface Constant {
 
     interface Preference {
 
-        String AUTO_LOGIN = "otherModule.autoLogin";
+        String MAIN_MENU = "main.menu";
 
-        String ACTIVITY_CYCLE = "developModule.activityCycle";
+        String AUTO_LOGIN = "other.autoLogin";
 
-        String ACTIVITY_START = "developModule.activityStart";
+        String ACTIVITY_CYCLE = "develop.activityCycle";
 
-        String ACTIVITY_RESULT = "developModule.activityResult";
+        String ACTIVITY_START = "develop.activityStart";
 
-        String WECHAT_LOG = "developModule.wechatLog";
+        String ACTIVITY_RESULT = "develop.activityResult";
+
+        String WECHAT_LOG = "develop.wechatLog";
     }
 
     interface Process {
@@ -87,9 +76,7 @@ public interface Constant {
 
     interface Action {
 
-        String REFRESH_VALUE = BuildConfig.APPLICATION_ID + ".ACTION_REFRESH_VALUE";
-
-        String HOOK_EVENT = BuildConfig.APPLICATION_ID + ".ACTION_HOOK_EVENT";
+        String STATUS_CHANGE = BuildConfig.APPLICATION_ID + ".ACTION_STATUS_CHANGE";
     }
 
     interface Key {

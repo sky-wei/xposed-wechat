@@ -7,9 +7,8 @@ import android.util.SparseArray;
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.config.ConfigManager;
 import com.sky.xposed.wechat.data.CachePreferences;
-import com.sky.xposed.wechat.hook.event.BackgroundEvent;
-import com.sky.xposed.wechat.hook.event.MainEvent;
-import com.sky.xposed.wechat.hook.event.MultiProEvent;
+import com.sky.xposed.wechat.data.model.Pair;
+import com.sky.xposed.wechat.hook.handler.Handler;
 import com.sky.xposed.wechat.hook.module.DevelopModule;
 import com.sky.xposed.wechat.hook.module.MainModule;
 import com.sky.xposed.wechat.hook.module.Module;
@@ -17,11 +16,8 @@ import com.sky.xposed.wechat.hook.module.OtherModule;
 import com.sky.xposed.wechat.ui.helper.ReceiverHelper;
 import com.sky.xposed.wechat.util.Alog;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -40,6 +36,7 @@ public class HookManager implements ReceiverHelper.ReceiverCallback {
     private CachePreferences mCachePreferences;
     private ReceiverHelper mReceiverHelper;
     private SparseArray<Module> mHookModules = new SparseArray<>();
+    private Map<String, Handler> mHandlerMap = new HashMap<>();
 
     private HookManager() {
     }
@@ -58,11 +55,10 @@ public class HookManager implements ReceiverHelper.ReceiverCallback {
         mLoadPackageParam = param;
         mConfigManager = configManager;
         mCachePreferences = new CachePreferences(context, Constant.Name.WE_CAT);
-        mReceiverHelper = new ReceiverHelper(context, this,
-                Constant.Action.HOOK_EVENT, Constant.Action.REFRESH_VALUE);
+        mReceiverHelper = new ReceiverHelper(
+                context, this, Constant.Action.STATUS_CHANGE);
 
         // 注册事件
-        EventBus.getDefault().register(this);
         mReceiverHelper.registerReceiver();
 
         initModule();
@@ -78,48 +74,52 @@ public class HookManager implements ReceiverHelper.ReceiverCallback {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onBackgroundEvent(BackgroundEvent event) {
-
-        for (int i = 0; i < mHookModules.size(); i++) {
-            // 处理事件
-            onBackgroundEvent(mHookModules.valueAt(i), event);
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMainEvent(MainEvent event) {
-
-        for (int i = 0; i < mHookModules.size(); i++) {
-            // 处理事件
-            onMainEvent(mHookModules.valueAt(i), event);
-        }
-    }
-
-    public void onMultiProgressEvent(MultiProEvent event) {
-
-        for (int i = 0; i < mHookModules.size(); i++) {
-            // 处理事件
-            onMultiProgressEvent(mHookModules.valueAt(i), event);
-        }
-    }
-
     @Override
     public void onReceive(String action, Intent intent) {
 
-        if (Constant.Action.HOOK_EVENT.equals(action)) {
-            // 处理数据
-            onMultiProgressEvent((MultiProEvent)
+        if (Constant.Action.STATUS_CHANGE.equals(action)) {
+            // 处理修改的值通知
+            onStatusChange((List<Pair<String, Object>>)
                     intent.getSerializableExtra(Constant.Key.DATA));
-        } else if (Constant.Action.REFRESH_VALUE.equals(action)) {
+        }
+    }
 
+    public void register(String key, Handler handler) {
+
+        if (handler == null
+                || mHandlerMap.containsKey(key)) {
+            return;
+        }
+
+        try {
+            // 初始化
+            handler.onInitialize(key, this);
+            mHandlerMap.put(key, handler);
+            // 开始处理
+            handler.onHandleLoadPackage();
+        } catch (Throwable tr) {
+            Alog.e("Register异常");
+        }
+    }
+
+    public void unregister(String key) {
+
+        if (!mHandlerMap.containsKey(key)) {
+            return;
+        }
+
+        try {
+            // 释放
+            Handler handler = mHandlerMap.remove(key);
+            handler.onRelease();
+        } catch (Throwable tr) {
+            Alog.e("Register异常");
         }
     }
 
     public void release() {
 
         // 释放事件
-        EventBus.getDefault().unregister(this);
         mReceiverHelper.unregisterReceiver();
     }
 
@@ -157,33 +157,37 @@ public class HookManager implements ReceiverHelper.ReceiverCallback {
         }
     }
 
-    public void onBackgroundEvent(Module module, BackgroundEvent event) {
+    private void onStatusChange(List<Pair<String, Object>> pairs) {
 
-        try {
-            // 处理事件
-            module.onBackgroundEvent(event);
-        } catch (Throwable tr) {
-            Alog.e("onBackgroundEvent", tr);
+        if (pairs == null) return;
+
+        for (Pair<String, Object> pair : pairs) {
+
+            // 修改缓存的信息
+            mCachePreferences.putObject(pair.first, pair.second);
+
+            // 直接调用
+            onHandlerStatusChange(pair);
         }
     }
 
-    public void onMainEvent(Module module, MainEvent event) {
+    private void onHandlerStatusChange(Pair<String, Object> pair) {
+
+        // 异常不需要处理
+        if (pair == null) return;
+
+        Alog.d("onHandlerStatusChange " + pair);
 
         try {
-            // 处理事件
-            module.onMainEvent(event);
-        } catch (Throwable tr) {
-            Alog.e("onMainEvent", tr);
-        }
-    }
+            // 获取需要处理的对象
+            Handler handler = mHandlerMap.get(pair.first);
 
-    public void onMultiProgressEvent(Module module, MultiProEvent event) {
-
-        try {
-            // 处理事件
-            module.onMultiProgressEvent(event);
+            if (handler != null) {
+                // 传递到需要处理的类
+                handler.onStatusChange(pair.first, pair.second);
+            }
         } catch (Throwable tr) {
-            Alog.e("onMultiProgressEvent", tr);
+            Alog.e("onStatusChange", tr);
         }
     }
 

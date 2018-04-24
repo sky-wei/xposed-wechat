@@ -1,4 +1,4 @@
-package com.sky.xposed.wechat.hook;
+package com.sky.xposed.wechat;
 
 import android.app.Application;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.content.Context;
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.config.ConfigManager;
 import com.sky.xposed.wechat.config.v665.ConfigManagerV665;
+import com.sky.xposed.wechat.hook.HookManager;
 import com.sky.xposed.wechat.hook.base.BaseHook;
 import com.sky.xposed.wechat.util.Alog;
 import com.sky.xposed.wechat.util.PackageUitl;
