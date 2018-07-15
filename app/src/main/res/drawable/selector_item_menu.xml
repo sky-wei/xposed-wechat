@@ -15,12 +15,18 @@
   ~ limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/menu_settings"
-        android:title="设置">
-
+    <item android:state_pressed="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" />
+        </shape>
     </item>
 
-</menu>
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#eeeeee" />
+        </shape>
+    </item>
+
+</selector>

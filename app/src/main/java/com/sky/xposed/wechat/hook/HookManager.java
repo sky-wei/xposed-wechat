@@ -1,9 +1,28 @@
+/*
+ * Copyright (c) 2018 The sky Authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.sky.xposed.wechat.hook;
 
 import android.content.Context;
 import android.content.Intent;
 import android.util.SparseArray;
 
+import com.sky.android.common.util.AToast;
+import com.sky.android.common.util.Alog;
+import com.sky.xposed.wechat.BuildConfig;
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.config.ConfigManager;
 import com.sky.xposed.wechat.data.CachePreferences;
@@ -14,7 +33,7 @@ import com.sky.xposed.wechat.hook.module.MainModule;
 import com.sky.xposed.wechat.hook.module.Module;
 import com.sky.xposed.wechat.hook.module.OtherModule;
 import com.sky.xposed.wechat.ui.helper.ReceiverHelper;
-import com.sky.xposed.wechat.util.Alog;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,12 +70,17 @@ public class HookManager implements ReceiverHelper.ReceiverCallback {
             throw new IllegalArgumentException("多次初始化异常");
         }
 
+        Alog.setDEBUG(BuildConfig.DEBUG);
+
         mContext = context;
         mLoadPackageParam = param;
         mConfigManager = configManager;
         mCachePreferences = new CachePreferences(context, Constant.Name.WE_CAT);
         mReceiverHelper = new ReceiverHelper(
                 context, this, Constant.Action.STATUS_CHANGE);
+
+        AToast.getInstance().init(context);
+        Picasso.setSingletonInstance(new Picasso.Builder(context).build());
 
         // 注册事件
         mReceiverHelper.registerReceiver();
@@ -144,7 +168,7 @@ public class HookManager implements ReceiverHelper.ReceiverCallback {
         // 添加模块
         add(new MainModule());
         add(new OtherModule());
-        if (Alog.sDEBUG) add(new DevelopModule());
+        if (Alog.isDEBUG()) add(new DevelopModule());
     }
 
     private void onHandleLoadPackage(Module module) {
