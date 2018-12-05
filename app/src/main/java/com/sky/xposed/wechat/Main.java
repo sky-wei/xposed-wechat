@@ -21,6 +21,8 @@ import android.content.Context;
 
 import com.sky.android.common.util.Alog;
 import com.sky.android.common.util.PackageUitl;
+import com.sky.xposed.javax.MethodHook;
+import com.sky.xposed.javax.XposedPlus;
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.config.ConfigManager;
 import com.sky.xposed.wechat.config.v665.ConfigManagerV665;
@@ -51,31 +53,33 @@ public class Main extends BaseHook {
 
     private void onHookWechat(final PackageUitl.SimplePackageInfo packageInfo, XC_LoadPackage.LoadPackageParam param) {
 
+        XposedPlus.setDefaultInstance(new XposedPlus.Builder(param).build());
+
         final ConfigManager configManager = loadWechatConfig(packageInfo);
 
         String applicationClassName = configManager.getClassName(Constant.ClassKey.APPLICATION);
         findClass(applicationClassName);
 
-        findAndHookMethod(applicationClassName, "onCreate", new XC_MethodHook() {
+        XposedPlus.get()
+                .findMethod(applicationClassName, "onCreate")
+                .hook(new MethodHook.AfterCallback() {
+                    @Override
+                    public void onAfter(XC_MethodHook.MethodHookParam methodHookParam) {
 
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
+                        long startTime = System.currentTimeMillis();
 
-                long startTime = System.currentTimeMillis();
+                        final Application application = (Application) methodHookParam.thisObject;
+                        final Context context = application.getApplicationContext();
 
-                final Application application = (Application) param.thisObject;
-                final Context context = application.getApplicationContext();
+                        // 初始化
+                        HookManager
+                                .getInstance()
+                                .initialization(context, getLoadPackageParam(), configManager)
+                                .onHandleLoadPackage();
 
-                // 初始化
-                HookManager
-                        .getInstance()
-                        .initialization(context, getLoadPackageParam(), configManager)
-                        .onHandleLoadPackage();
-
-                Alog.d("初始化Application完成,耗时：" + (System.currentTimeMillis() - startTime));
-            }
-        });
+                        Alog.d("初始化Application完成,耗时：" + (System.currentTimeMillis() - startTime));
+                    }
+                });
     }
 
     private ConfigManager loadWechatConfig(PackageUitl.SimplePackageInfo packageInfo) {
