@@ -16,9 +16,9 @@
 
 package com.sky.xposed.wechat.util;
 
-import com.sky.android.common.util.Alog;
+import com.sky.xposed.common.util.Alog;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.lang.reflect.Method;
 
 /**
  * Created by sky on 18-3-27.
@@ -26,25 +26,49 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class ToStringUtil {
 
+    private static Method mMethodReflectionToString;
+
+    static {
+        try {
+            Class<?> classToStringBuilder = Class
+                    .forName("org.apache.commons.lang3.builder.ToStringBuilder");
+            mMethodReflectionToString = classToStringBuilder
+                    .getDeclaredMethod("reflectionToString", Object.class);
+        } catch (Throwable ignored) {
+        }
+    }
+
     public static void toString(Object object) {
+
+        if (mMethodReflectionToString == null || !Alog.isDebug()) {
+            return;
+        }
 
         if (object == null) {
             Alog.d("打印的对象为空");
             return;
         }
 
-        // 直接输出
-        Alog.d(ToStringBuilder.reflectionToString(object));
+        try {
+            Alog.d((String) mMethodReflectionToString.invoke(null, object));
+        } catch (Throwable ignored) {
+        }
     }
 
     public static void toString(String tag, Object object) {
+
+        if (mMethodReflectionToString == null || !Alog.isDebug()) {
+            return;
+        }
 
         if (object == null) {
             Alog.d("$tag 打印的对象为空");
             return;
         }
 
-        // 直接输出
-        Alog.d(tag + " " + ToStringBuilder.reflectionToString(object));
+        try {
+            Alog.d(tag + " " + mMethodReflectionToString.invoke(null, object));
+        } catch (Throwable ignored) {
+        }
     }
 }

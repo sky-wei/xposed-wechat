@@ -25,8 +25,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.sky.android.common.util.DisplayUtil;
-import com.sky.xposed.wechat.ui.util.LayoutUtil;
+import com.sky.xposed.common.ui.util.LayoutUtil;
+import com.sky.xposed.common.util.DisplayUtil;
 
 /**
  * Created by sky on 18-3-27.

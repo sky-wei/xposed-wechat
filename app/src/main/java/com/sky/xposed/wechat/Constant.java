@@ -22,14 +22,9 @@ package com.sky.xposed.wechat;
 
 public interface Constant {
 
-    interface Wechat {
+    interface WeChat {
 
         String PACKAGE_NAME = "com.tencent.mm";
-    }
-
-    interface ClassKey {
-
-        int APPLICATION = 0x000001;
     }
 
     interface Event {
@@ -37,25 +32,27 @@ public interface Constant {
         int CLICK = 0x01;
     }
 
-    interface ModuleId {
-
-        int MAIN = 0x0000;
-
-        int OTHER = 0x1001;
-
-        int DEVELOP = 0x1002;
-
-        int ABOUT = 0x1003;
-    }
-
     interface Color {
 
         int BLUE = 0xFF393A3F;
+
+        int TOOLBAR = 0xff303030;
+
+        int TITLE = 0xff004198;
+
+        int DESC = 0xff303030;
     }
 
-    interface Strings {
+    interface GroupId {
+
+        int GROUP = 999;
+    }
+
+    interface Name {
 
         String TITLE = "WeCat";
+
+        String WE_CHAT = "wechat";
     }
 
     interface Preference {
@@ -73,35 +70,27 @@ public interface Constant {
         String WECHAT_LOG = "develop.wechatLog";
     }
 
-    interface Process {
+    interface Flag {
 
-        int MAIN = 0x01;
-
-        int EX_DEVICE = 0x02;
-
-        int PUSH = 0x03;
-
-        int SUPPORT = 0x04;
-
-        int TOOLS = 0x05;
-
-        int SANDBOX = 0x06;
-
-        int OTHER = 0x07;
+        int MAIN = 0xFF000000;
     }
 
-    interface Action {
+    interface Plugin {
 
-        String STATUS_CHANGE = BuildConfig.APPLICATION_ID + ".ACTION_STATUS_CHANGE";
+        int MAIN_SETTINGS = 0x00000000;
+
+        int DEBUG = 0x01000000;
+
+        int MESSAGE_GROUP = 0x02000000;
+    }
+
+    interface ItemId {
+
+        int MAIN_SETTINGS = 60001;
     }
 
     interface Key {
 
         String DATA = "data";
-    }
-
-    interface Name {
-
-        String WE_CAT = "weCat";
     }
 }

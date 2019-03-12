@@ -16,73 +16,74 @@
 
 package com.sky.xposed.wechat;
 
+import android.app.ActivityThread;
 import android.app.Application;
 import android.content.Context;
 
-import com.sky.android.common.util.Alog;
-import com.sky.android.common.util.PackageUitl;
+import com.sky.xposed.common.util.Alog;
 import com.sky.xposed.javax.MethodHook;
 import com.sky.xposed.javax.XposedPlus;
-import com.sky.xposed.wechat.Constant;
-import com.sky.xposed.wechat.config.ConfigManager;
-import com.sky.xposed.wechat.config.v665.ConfigManagerV665;
-import com.sky.xposed.wechat.hook.HookManager;
-import com.sky.xposed.wechat.hook.base.BaseHook;
+import com.sky.xposed.javax.XposedUtil;
+import com.sky.xposed.wechat.data.M;
+import com.sky.xposed.wechat.data.VersionManager;
+import com.sky.xposed.wechat.plugin.PluginManager;
+import com.sky.xposed.wechat.plugin.interfaces.XConfig;
+import com.sky.xposed.wechat.plugin.interfaces.XPluginManager;
+import com.sky.xposed.wechat.plugin.interfaces.XVersionManager;
 
-import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 /**
  * Created by sky on 18-3-10.
  */
 
-public class Main extends BaseHook {
+public class Main implements IXposedHookLoadPackage, MethodHook.ThrowableCallback {
 
     @Override
-    public void onHandleLoadPackage(XC_LoadPackage.LoadPackageParam param) {
-
-        String packageName = param.packageName;
-
-        if (Constant.Wechat.PACKAGE_NAME.equals(packageName)) {
-
-            // 处理微信
-            onHookWechat(PackageUitl.getSimplePackageInfo(
-                    getSystemContext(), packageName), param);
-        }
+    public void onThrowable(Throwable tr) {
+        Alog.e("Throwable", tr);
     }
 
-    private void onHookWechat(final PackageUitl.SimplePackageInfo packageInfo, XC_LoadPackage.LoadPackageParam param) {
+    @Override
+    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpParam) throws Throwable {
 
-        XposedPlus.setDefaultInstance(new XposedPlus.Builder(param).build());
+        final String packageName = lpParam.packageName;
 
-        final ConfigManager configManager = loadWechatConfig(packageInfo);
+        if (!Constant.WeChat.PACKAGE_NAME.equals(packageName)) return;
 
-        String applicationClassName = configManager.getClassName(Constant.ClassKey.APPLICATION);
-        findClass(applicationClassName);
+        // 获取版本管理对象
+        XVersionManager versionManager = new VersionManager
+                .Build(ActivityThread.currentActivityThread().getSystemContext())
+                .build();
 
-        XposedPlus.get()
-                .findMethod(applicationClassName, "onCreate")
-                .hook(new MethodHook.AfterCallback() {
-                    @Override
-                    public void onAfter(XC_MethodHook.MethodHookParam methodHookParam) {
+        if (!versionManager.isSupportVersion()) return;
 
-                        long startTime = System.currentTimeMillis();
+        // 设置默认的参数
+        XposedPlus.setDefaultInstance(new XposedPlus.Builder(lpParam)
+                .throwableCallback(this)
+                .build());
 
-                        final Application application = (Application) methodHookParam.thisObject;
-                        final Context context = application.getApplicationContext();
+        // 获取支持的版本配置
+        XConfig config = versionManager.getSupportConfig();
 
-                        // 初始化
-                        HookManager
-                                .getInstance()
-                                .initialization(context, getLoadPackageParam(), configManager)
-                                .onHandleLoadPackage();
+        XposedUtil
+                .findMethod(
+                        config.get(M.classz.class_tinker_loader_app_TinkerApplication),
+                        config.get(M.method.method_tinker_loader_app_TinkerApplication_onCreate))
+                .before(param -> {
 
-                        Alog.d("初始化Application完成,耗时：" + (System.currentTimeMillis() - startTime));
-                    }
+                    Application application = (Application) param.thisObject;
+                    Context context = application.getApplicationContext();
+
+                    XPluginManager pluginManager = new PluginManager
+                            .Build(context)
+                            .setLoadPackageParam(lpParam)
+                            .setVersionManager(versionManager)
+                            .build();
+
+                    // 开始处理加载的包
+                    pluginManager.handleLoadPackage();
                 });
-    }
-
-    private ConfigManager loadWechatConfig(PackageUitl.SimplePackageInfo packageInfo) {
-        return new ConfigManagerV665();
     }
 }

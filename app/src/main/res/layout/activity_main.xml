@@ -47,7 +47,7 @@
             app:sky_itemMenuLine="true"
             app:sky_itemMenuTextSize="15sp"
             app:sky_itemMenuShowMore="false"
-            app:sky_itemMenuName="抖音版本"
+            app:sky_itemMenuName="微信版本"
             android:background="@drawable/selector_item_menu"
             />
 

@@ -27,11 +27,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.sky.android.common.util.Alog;
-import com.sky.android.common.util.DisplayUtil;
+import com.sky.xposed.common.ui.util.LayoutUtil;
+import com.sky.xposed.common.util.Alog;
+import com.sky.xposed.common.util.DisplayUtil;
 import com.sky.xposed.wechat.BuildConfig;
 import com.sky.xposed.wechat.R;
-import com.sky.xposed.wechat.ui.util.LayoutUtil;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;

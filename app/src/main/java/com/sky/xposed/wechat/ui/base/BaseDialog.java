@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 The sky Authors.
+ * Copyright (c) 2019 The sky Authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,78 +16,34 @@
 
 package com.sky.xposed.wechat.ui.base;
 
-import android.app.DialogFragment;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
+import com.sky.xposed.common.ui.base.BaseDialogFragment;
 import com.sky.xposed.wechat.Constant;
-import com.sky.xposed.wechat.ui.interfaces.TrackViewStatus;
+import com.sky.xposed.wechat.data.ResourceManager;
+import com.sky.xposed.wechat.plugin.PluginManager;
+import com.sky.xposed.wechat.plugin.interfaces.XPluginManager;
+import com.sky.xposed.wechat.plugin.interfaces.XResourceManager;
 
 /**
- * Created by sky on 18-3-11.
+ * Created by sky on 2018/12/18.
  */
-
-public abstract class BaseDialog extends DialogFragment {
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return createView(inflater, container);
-    }
+public abstract class BaseDialog extends BaseDialogFragment {
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // 初始化View
-        initView(view, getArguments());
-    }
-
-    /**
-     * 针对New Dialog处理的
-     * @return
-     */
-    protected View createDialogView() {
-
-        // 创建View
-        View view = createView(getSkyLayoutInflater(), null);
-
-        // 初始化
-        initView(view, getArguments());
-
-        return view;
-    }
-
-    protected abstract View createView(LayoutInflater inflater, ViewGroup container);
-
-    protected abstract void initView(View view, Bundle args);
-
-    public Context getContext() {
-        return getActivity();
-    }
-
-    public LayoutInflater getSkyLayoutInflater() {
-        return LayoutInflater.from(getContext());
-    }
-
-    public Context getApplicationContext() {
-        return getActivity().getApplicationContext();
-    }
-
-    public SharedPreferences getSharedPreferences(String name) {
-        return getContext().getSharedPreferences(name, Context.MODE_PRIVATE);
-    }
-
     public SharedPreferences getDefaultSharedPreferences() {
-        return getSharedPreferences(Constant.Name.WE_CAT);
+        return getSharedPreferences(Constant.Name.WE_CHAT);
     }
 
-    public <T> void trackBind(TrackViewStatus<T> track, String key, T defValue, TrackViewStatus.StatusChangeListener<T> listener) {
-        track.bind(getDefaultSharedPreferences(), key, defValue, listener);
+    public XPluginManager getPluginManager() {
+        return PluginManager.getInstance();
+    }
+
+    public XResourceManager getResourceManager() {
+        return getPluginManager().getResourceManager();
+    }
+
+    public ResourceManager.Theme getMTheme() {
+        return getResourceManager().getTheme();
     }
 }

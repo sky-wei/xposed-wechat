@@ -16,8 +16,6 @@
 
 package com.sky.xposed.wechat.ui.activity;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -25,12 +23,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.sky.android.common.util.AToast;
-import com.sky.android.common.util.PackageUitl;
+import com.sky.xposed.common.util.PackageUtil;
+import com.sky.xposed.common.util.ToastUtil;
 import com.sky.xposed.wechat.BuildConfig;
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.R;
-import com.sky.xposed.wechat.ui.dialog.SettingDialog;
+import com.sky.xposed.wechat.ui.dialog.PluginSettingsDialog;
+import com.sky.xposed.wechat.ui.util.ActivityUtil;
 import com.sky.xposed.wechat.ui.view.ItemMenu;
 import com.sky.xposed.wechat.util.CommUtil;
 
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // 初始化
-        AToast.getInstance().init(getApplicationContext());
+        ToastUtil.getInstance().init(getApplicationContext());
 
         imVersion = findViewById(R.id.im_version);
         imWeiShiVersion = findViewById(R.id.im_wechat_version);
@@ -70,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.menu_settings) {
             // 显示
-            SettingDialog dialog = new SettingDialog();
+            PluginSettingsDialog dialog = new PluginSettingsDialog();
             dialog.show(getFragmentManager(), "setting");
             return true;
         }
@@ -82,11 +81,11 @@ public class MainActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.im_download:
                 // 下载
-                openUrl("http://repo.xposed.info/module/com.sky.xposed.wechat");
+                ActivityUtil.openUrl(this, "http://repo.xposed.info/module/com.sky.xposed.wechat");
                 break;
             case R.id.im_source:
                 // 源地址
-                openUrl("https://github.com/sky-wei/xposed-wechat");
+                ActivityUtil.openUrl(this, "https://github.com/sky-wei/xposed-wechat");
                 break;
             case R.id.im_donate:
                 // 捐赠
@@ -99,24 +98,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void openUrl(String url) {
-
-        try {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(url));
-
-            // 调用系统浏览器打开
-            startActivity(intent);
-        } catch (Throwable tr) {
-            AToast.show("打开浏览器异常");
-        }
-    }
-
     private String getWechatVersionName() {
 
         // 获取微视版本名
-        PackageUitl.SimplePackageInfo info = PackageUitl
-                .getSimplePackageInfo(this, Constant.Wechat.PACKAGE_NAME);
+        PackageUtil.SimplePackageInfo info = PackageUtil
+                .getSimplePackageInfo(this, Constant.WeChat.PACKAGE_NAME);
 
         return info == null ? "Unknown" : "v" + info.getVersionName();
     }

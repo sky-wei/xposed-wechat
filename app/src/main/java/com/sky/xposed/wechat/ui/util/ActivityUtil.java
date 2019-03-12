@@ -18,9 +18,11 @@ package com.sky.xposed.wechat.ui.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 
-import com.sky.android.common.util.Alog;
+import com.sky.xposed.common.util.Alog;
+import com.sky.xposed.common.util.ToastUtil;
 
 
 /**
@@ -46,6 +48,21 @@ public class ActivityUtil {
             return true;
         } catch (Exception e) {
             Alog.e("启动Activity异常", e);
+        }
+        return false;
+    }
+
+    public static boolean openUrl(Context context, String url) {
+
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+
+            // 调用系统浏览器打开
+            context.startActivity(intent);
+            return true;
+        } catch (Throwable tr) {
+            ToastUtil.show("打开浏览器异常");
         }
         return false;
     }
