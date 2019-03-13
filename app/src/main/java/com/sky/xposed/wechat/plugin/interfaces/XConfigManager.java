@@ -16,9 +16,41 @@
 
 package com.sky.xposed.wechat.plugin.interfaces;
 
+import java.util.Set;
+
 /**
  * Created by sky on 2019/3/12.
  */
 public interface XConfigManager {
 
+    /**
+     * 获取字符串
+     * @param flag
+     * @param defValue
+     * @return
+     */
+    String getString(int flag, String defValue);
+
+    boolean getBoolean(int flag, boolean defValue);
+
+    int getInt(int flag, int defValue);
+
+    Set<String> getStringSet(int flag, Set<String> defValue);
+
+    void putString(int flag, String value);
+
+    void putBoolean(int flag, boolean value);
+
+    void putInt(int flag, int value);
+
+    void putStringSet(int flag, Set<String> value);
+
+    /**
+     * 获取指定名称的配置管理对象
+     * @param name
+     * @return
+     */
+    XConfigManager getConfigManager(String name);
+
+    void release();
 }

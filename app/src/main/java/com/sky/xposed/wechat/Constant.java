@@ -55,6 +55,13 @@ public interface Constant {
         String WE_CHAT = "wechat";
     }
 
+    interface XFlag {
+
+        int MAIN_MENU = 0x000001;
+
+        int AUTO_LOGIN = 0x000002;
+    }
+
     interface Preference {
 
         String MAIN_MENU = "main.menu";
@@ -81,7 +88,11 @@ public interface Constant {
 
         int DEBUG = 0x01000000;
 
-        int MESSAGE_GROUP = 0x02000000;
+        int COMMON = 0x02000000;
+
+        int LUCKY_MONEY = 0x03000000;
+
+        int REMITTANCE = 0x04000000;
     }
 
     interface ItemId {

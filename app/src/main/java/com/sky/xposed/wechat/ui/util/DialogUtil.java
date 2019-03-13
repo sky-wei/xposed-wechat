@@ -19,16 +19,21 @@ package com.sky.xposed.wechat.ui.util;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.sky.xposed.common.ui.util.LayoutUtil;
 import com.sky.xposed.common.ui.util.ViewUtil;
+import com.sky.xposed.common.util.Alog;
 import com.sky.xposed.common.util.DisplayUtil;
+import com.sky.xposed.wechat.BuildConfig;
 
 /**
  * Created by sky on 2018/12/21.
@@ -43,7 +48,8 @@ public class DialogUtil {
         showMessage(context, "提示", message, "确定", null, true);
     }
 
-    public static void showMessage(Context context, String title, String message, String positiveText, DialogInterface.OnClickListener listener, boolean cancel) {
+    public static void showMessage(Context context, String title,
+                                   String message, String positiveText, DialogInterface.OnClickListener listener, boolean cancel) {
 
         if (context == null
                 || TextUtils.isEmpty(message)
@@ -127,6 +133,49 @@ public class DialogUtil {
         });
         builder.setNegativeButton("取消", null);
         builder.show();
+    }
+
+    public static void showAboutDialog(Context context) {
+
+        try {
+            int left = DisplayUtil.dip2px(context, 25f);
+            int top = DisplayUtil.dip2px(context, 10f);
+
+            LinearLayout.LayoutParams contentParams = LayoutUtil.newMatchLinearLayoutParams();
+
+            LinearLayout content = new LinearLayout(context);
+            content.setLayoutParams(contentParams);
+            content.setOrientation(LinearLayout.VERTICAL);
+            content.setBackgroundColor(Color.WHITE);
+            content.setPadding(left, top, left, 0);
+
+            TextView tvHead = new TextView(context);
+            tvHead.setTextColor(Color.BLACK);
+            tvHead.setTextSize(14f);
+            tvHead.setText("\n当前版本：v" + BuildConfig.VERSION_NAME);
+
+//            ImageView ivCommunity = new ImageView(context);
+//            ivCommunity.setLayoutParams(LayoutUtil.newWrapLinearLayoutParams());
+//            Picasso.get().load(resourceIdToUri(R.drawable.community)).into(ivCommunity);
+
+            TextView tvTail = new TextView(context);
+            tvTail.setTextColor(Color.BLACK);
+            tvTail.setTextSize(14f);
+//            tvTail.setText("官方QQ群：\n794327446(已满)\n824933593\n");
+
+            content.addView(tvHead);
+//            content.addView(ivCommunity);
+            content.addView(tvTail);
+
+            // 显示关于
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("关于");
+            builder.setView(content);
+            builder.setPositiveButton("确定", (dialog, which) -> dialog.dismiss());
+            builder.show();
+        } catch (Throwable tr) {
+            Alog.e("异常了", tr);
+        }
     }
 
     public interface OnEditListener {

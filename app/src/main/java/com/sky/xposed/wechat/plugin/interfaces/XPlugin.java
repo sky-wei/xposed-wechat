@@ -59,8 +59,9 @@ public interface XPlugin {
     /**
      * 是否启用
      * @param flag
+     * @param defValue
      */
-    boolean isEnable(int flag);
+    boolean isEnable(int flag, boolean defValue);
 
     /**
      * 设置是否启用

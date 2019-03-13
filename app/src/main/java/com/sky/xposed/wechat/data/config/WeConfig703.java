@@ -29,11 +29,13 @@ public class WeConfig703 extends WeConfig {
         /** Class */
         add(M.classz.class_tinker_loader_app_TinkerApplication, "com.tencent.tinker.loader.app.TinkerApplication");
         add(M.classz.class_ui_LauncherUI, "com.tencent.mm.ui.LauncherUI");
+        add(M.classz.class_plugin_webwx_ui_ExtDeviceWXLoginUI, "com.tencent.mm.plugin.webwx.ui.ExtDeviceWXLoginUI");
 
         /** Method */
         add(M.method.method_tinker_loader_app_TinkerApplication_onCreate, "onCreate");
         add(M.method.method_ui_LauncherUI_onCreateOptionsMenu, "onCreateOptionsMenu");
         add(M.method.method_ui_LauncherUI_onOptionsItemSelected, "onOptionsItemSelected");
+        add(M.method.method_plugin_webwx_ui_ExtDeviceWXLoginUI_onResume, "onResume");
 
         /** Field */
     }

@@ -16,6 +16,8 @@
 
 package com.sky.xposed.wechat.plugin.interfaces;
 
+import java.util.List;
+
 /**
  * Created by sky on 2019/3/12.
  */
@@ -44,4 +46,10 @@ public interface XVersionManager {
      * @return
      */
     XConfig getSupportConfig();
+
+    /**
+     * 获取插件支持的版本
+     * @return
+     */
+    List<String> getSupportVersion();
 }

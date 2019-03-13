@@ -17,9 +17,14 @@
 package com.sky.xposed.wechat.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.sky.xposed.wechat.plugin.interfaces.XConfigManager;
 import com.sky.xposed.wechat.plugin.interfaces.XPluginManager;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by sky on 2018/12/24.
@@ -27,17 +32,148 @@ import com.sky.xposed.wechat.plugin.interfaces.XPluginManager;
 public class ConfigManager implements XConfigManager {
 
     private Context mContext;
+    private SimplePreferences mSimplePreferences;
+    private Map<String, XConfigManager> mManagerMap = new HashMap<>();
 
     private ConfigManager(Build build) {
         mContext = build.mXPluginManager.getContext();
+        mSimplePreferences = new SimplePreferences(mContext, build.mName);
+    }
+
+    @Override
+    public String getString(int flag, String defValue) {
+        return mSimplePreferences.getString(flag, defValue);
+    }
+
+    @Override
+    public boolean getBoolean(int flag, boolean defValue) {
+        return mSimplePreferences.getBoolean(flag, defValue);
+    }
+
+    @Override
+    public int getInt(int flag, int defValue) {
+        return mSimplePreferences.getInt(flag, defValue);
+    }
+
+    @Override
+    public Set<String> getStringSet(int flag, Set<String> defValue) {
+        return mSimplePreferences.getStringSet(flag, defValue);
+    }
+
+    @Override
+    public void putString(int flag, String value) {
+        mSimplePreferences.putString(flag, value);
+    }
+
+    @Override
+    public void putBoolean(int flag, boolean value) {
+        mSimplePreferences.putBoolean(flag, value);
+    }
+
+    @Override
+    public void putInt(int flag, int value) {
+        mSimplePreferences.putInt(flag, value);
+    }
+
+    @Override
+    public void putStringSet(int flag, Set<String> value) {
+        mSimplePreferences.putStringSet(flag, value);
+    }
+
+    @Override
+    public XConfigManager getConfigManager(String name) {
+
+        if (mManagerMap.containsKey(name)) {
+            // 存在了直接返回
+            return mManagerMap.get(name);
+        }
+
+        // 创建对象
+        SimplePreferences preferences = new SimplePreferences(mContext, name);
+        mManagerMap.put(name, preferences);
+
+        return preferences;
+    }
+
+    @Override
+    public void release() {
+        mManagerMap.clear();
+    }
+
+    /**
+     * 一个简单属性配置管理类
+     */
+    private final class SimplePreferences implements XConfigManager {
+
+        private SharedPreferences mSharedPreferences;
+
+        public SimplePreferences(Context context, String name) {
+            mSharedPreferences = context.getSharedPreferences(name, Context.MODE_PRIVATE);
+        }
+
+        @Override
+        public String getString(int flag, String defValue) {
+            return mSharedPreferences.getString(Integer.toString(flag), defValue);
+        }
+
+        @Override
+        public boolean getBoolean(int flag, boolean defValue) {
+            return mSharedPreferences.getBoolean(Integer.toString(flag), defValue);
+        }
+
+        @Override
+        public int getInt(int flag, int defValue) {
+            return mSharedPreferences.getInt(Integer.toString(flag), defValue);
+        }
+
+        @Override
+        public Set<String> getStringSet(int flag, Set<String> defValue) {
+            return mSharedPreferences.getStringSet(Integer.toString(flag), defValue);
+        }
+
+        @Override
+        public void putString(int flag, String value) {
+            mSharedPreferences.edit().putString(Integer.toString(flag), value).apply();
+        }
+
+        @Override
+        public void putBoolean(int flag, boolean value) {
+            mSharedPreferences.edit().putBoolean(Integer.toString(flag), value).apply();
+        }
+
+        @Override
+        public void putInt(int flag, int value) {
+            mSharedPreferences.edit().putInt(Integer.toString(flag), value).apply();
+        }
+
+        @Override
+        public void putStringSet(int flag, Set<String> value) {
+            mSharedPreferences.edit().putStringSet(Integer.toString(flag), value).apply();
+        }
+
+        @Override
+        public XConfigManager getConfigManager(String name) {
+            throw new IllegalArgumentException("不支持当前操作");
+        }
+
+        @Override
+        public void release() {
+            throw new IllegalArgumentException("不支持当前操作");
+        }
     }
 
     public static class Build {
 
         private XPluginManager mXPluginManager;
+        private String mName;
 
         public Build(XPluginManager xPluginManager) {
             mXPluginManager = xPluginManager;
+        }
+
+        public Build setConfigName(String name) {
+            mName = name;
+            return this;
         }
 
         public XConfigManager build() {

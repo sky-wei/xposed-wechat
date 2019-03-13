@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package com.sky.xposed.wechat.plugin.other;
+package com.sky.xposed.wechat.plugin.common;
 
 import android.app.Activity;
 import android.widget.Button;
 
+import com.sky.xposed.wechat.Constant;
+import com.sky.xposed.wechat.data.M;
+import com.sky.xposed.wechat.data.model.PluginInfo;
 import com.sky.xposed.wechat.plugin.base.BasePlugin;
 import com.sky.xposed.wechat.plugin.interfaces.XPluginManager;
+import com.sky.xposed.wechat.ui.dialog.UserComDialog;
 import com.sky.xposed.wechat.util.FindUtil;
 
 import java.lang.reflect.Field;
@@ -30,24 +34,26 @@ import de.robv.android.xposed.XposedHelpers;
 /**
  * Created by sky on 2019/3/12.
  */
-public class OtherPlugin extends BasePlugin {
+public class UserComPlugin extends BasePlugin {
 
-    public OtherPlugin(XPluginManager pluginManager) {
+    public UserComPlugin(XPluginManager pluginManager) {
         super(pluginManager);
     }
 
     @Override
     public Info getInfo() {
-        return null;
+        return new PluginInfo(Constant.Plugin.COMMON, "常用功能");
     }
 
     @Override
     public void onHandleLoadPackage() {
 
         findMethod(
-                "com.tencent.mm.plugin.webwx.ui.ExtDeviceWXLoginUI",
-                "onResume")
+                M.classz.class_plugin_webwx_ui_ExtDeviceWXLoginUI,
+                M.method.method_plugin_webwx_ui_ExtDeviceWXLoginUI_onResume)
                 .after(param -> {
+
+                    if (!isEnable(Constant.XFlag.AUTO_LOGIN, false)) return;
 
                     final Object thisObject = param.thisObject;
 
@@ -71,5 +77,7 @@ public class OtherPlugin extends BasePlugin {
     @Override
     public void openSettings(Activity activity) {
 
+        UserComDialog dialog = new UserComDialog();
+        dialog.show(activity.getFragmentManager(), "userCommon");
     }
 }

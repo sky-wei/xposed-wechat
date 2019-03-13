@@ -24,15 +24,19 @@ import android.util.SparseArray;
 import com.sky.xposed.common.util.Alog;
 import com.sky.xposed.common.util.ToastUtil;
 import com.sky.xposed.wechat.BuildConfig;
+import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.data.ConfigManager;
 import com.sky.xposed.wechat.data.ResourceManager;
-import com.sky.xposed.wechat.plugin.debug.DebugPlugin;
+import com.sky.xposed.wechat.plugin.common.UserComPlugin;
+import com.sky.xposed.wechat.plugin.develop.DevelopPlugin;
 import com.sky.xposed.wechat.plugin.interfaces.XConfigManager;
 import com.sky.xposed.wechat.plugin.interfaces.XPlugin;
 import com.sky.xposed.wechat.plugin.interfaces.XPluginManager;
 import com.sky.xposed.wechat.plugin.interfaces.XResourceManager;
 import com.sky.xposed.wechat.plugin.interfaces.XVersionManager;
+import com.sky.xposed.wechat.plugin.lucky.LuckyMoneyPlugin;
 import com.sky.xposed.wechat.plugin.main.SettingsPlugin;
+import com.sky.xposed.wechat.plugin.remittance.RemittancePlugin;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -130,6 +134,7 @@ public class PluginManager implements XPluginManager {
         if (mConfigManager == null) {
             mConfigManager = new ConfigManager
                     .Build(this)
+                    .setConfigName(Constant.Name.WE_CHAT)
                     .build();
         }
         return mConfigManager;
@@ -220,9 +225,12 @@ public class PluginManager implements XPluginManager {
     private void loadPlugin() {
 
         addPlugin(new SettingsPlugin(this));
+        addPlugin(new UserComPlugin(this));
+        addPlugin(new LuckyMoneyPlugin(this));
+        addPlugin(new RemittancePlugin(this));
 
         if (BuildConfig.DEBUG) {
-            addPlugin(new DebugPlugin(this));
+            addPlugin(new DevelopPlugin(this));
         }
     }
 

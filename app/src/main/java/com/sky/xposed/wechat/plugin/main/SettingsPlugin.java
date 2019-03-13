@@ -51,7 +51,7 @@ public class SettingsPlugin extends BasePlugin {
                     XPlugin xPlugin = getPluginManager()
                             .getXPluginById(Constant.Plugin.MAIN_SETTINGS);
 
-                    if (xPlugin.isEnable(0)) {
+                    if (xPlugin.isEnable(Constant.XFlag.MAIN_MENU, true)) {
                         Menu menu = (Menu) param.args[0];
                         menu.add(Constant.GroupId.GROUP,
                                 Constant.ItemId.MAIN_SETTINGS, 0, Constant.Name.TITLE);

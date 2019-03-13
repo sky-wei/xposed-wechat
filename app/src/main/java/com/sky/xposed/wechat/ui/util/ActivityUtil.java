@@ -31,6 +31,8 @@ import com.sky.xposed.common.util.ToastUtil;
 
 public class ActivityUtil {
 
+    static final String ALI_PAY_URI = "alipayqr://platformapi/startapp?saId=10000007&clientVersion=3.7.0.0718&qrcode=";
+
     public static boolean startActivity(Context context, Intent intent) {
 
         try {
@@ -65,5 +67,30 @@ public class ActivityUtil {
             ToastUtil.show("打开浏览器异常");
         }
         return false;
+    }
+
+    /**
+     * 启动支付宝
+     * @param context
+     * @param payUrl
+     * @return
+     */
+    public static boolean startAlipay(Context context, String payUrl) {
+
+        try {
+            Intent intent = new Intent("android.intent.action.VIEW");
+            intent.setData(Uri.parse(ALI_PAY_URI + payUrl));
+
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            } else {
+                intent.setData(Uri.parse(payUrl));
+                context.startActivity(intent);
+            }
+            return true;
+        } catch (Throwable tr) {
+            Alog.e("启动失败", tr);
+            return false;
+        }
     }
 }

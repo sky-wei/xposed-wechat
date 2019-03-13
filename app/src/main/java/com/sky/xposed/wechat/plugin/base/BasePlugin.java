@@ -24,6 +24,7 @@ import com.sky.xposed.common.util.Alog;
 import com.sky.xposed.javax.MethodHook;
 import com.sky.xposed.javax.XposedUtil;
 import com.sky.xposed.wechat.plugin.interfaces.XConfig;
+import com.sky.xposed.wechat.plugin.interfaces.XConfigManager;
 import com.sky.xposed.wechat.plugin.interfaces.XPlugin;
 import com.sky.xposed.wechat.plugin.interfaces.XPluginManager;
 
@@ -41,12 +42,14 @@ public abstract class BasePlugin implements XPlugin {
     private final Context mContext;
     private final XC_LoadPackage.LoadPackageParam mParam;
     private final XConfig mXConfig;
+    private final XConfigManager mConfigManager;
 
     public BasePlugin(XPluginManager pluginManager) {
         mPluginManager = pluginManager;
         mContext = pluginManager.getContext();
         mParam = pluginManager.getLoadPackageParam();
         mXConfig = mPluginManager.getVersionManager().getSupportConfig();
+        mConfigManager = pluginManager.getConfigManager();
     }
 
     @Override
@@ -65,12 +68,13 @@ public abstract class BasePlugin implements XPlugin {
     }
 
     @Override
-    public boolean isEnable(int flag) {
-        return true;
+    public boolean isEnable(int flag, boolean defValue) {
+        return mConfigManager.getBoolean(flag, defValue);
     }
 
     @Override
     public void setEnable(int flag, boolean enable) {
+        mConfigManager.putBoolean(flag, enable);
     }
 
     public Context getSystemContext() {
@@ -87,6 +91,10 @@ public abstract class BasePlugin implements XPlugin {
 
     public XConfig getXConfig() {
         return mXConfig;
+    }
+
+    public XConfigManager getConfigManager() {
+        return mConfigManager;
     }
 
     public XC_LoadPackage.LoadPackageParam getLoadPackageParam() {

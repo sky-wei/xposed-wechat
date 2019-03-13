@@ -23,15 +23,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.sky.xposed.common.ui.view.ItemMenu;
 import com.sky.xposed.common.util.PackageUtil;
 import com.sky.xposed.common.util.ToastUtil;
 import com.sky.xposed.wechat.BuildConfig;
 import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.R;
+import com.sky.xposed.wechat.data.VersionManager;
+import com.sky.xposed.wechat.plugin.interfaces.XVersionManager;
+import com.sky.xposed.wechat.ui.dialog.DonateDialog;
 import com.sky.xposed.wechat.ui.dialog.PluginSettingsDialog;
 import com.sky.xposed.wechat.ui.util.ActivityUtil;
-import com.sky.xposed.wechat.ui.view.ItemMenu;
-import com.sky.xposed.wechat.util.CommUtil;
+import com.sky.xposed.wechat.ui.util.DialogUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,12 +50,17 @@ public class MainActivity extends AppCompatActivity {
         // 初始化
         ToastUtil.getInstance().init(getApplicationContext());
 
+        XVersionManager versionManager = new VersionManager
+                .Build(getApplicationContext())
+                .build();
+
         imVersion = findViewById(R.id.im_version);
         imWeiShiVersion = findViewById(R.id.im_wechat_version);
         tvSupportVersion = findViewById(R.id.tv_support_version);
 
         imVersion.setDesc("v" + BuildConfig.VERSION_NAME);
         imWeiShiVersion.setDesc(getWechatVersionName());
+        tvSupportVersion.setText("支持的版本: " + versionManager.getSupportVersion());
     }
 
     @Override
@@ -89,11 +97,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.im_donate:
                 // 捐赠
-//                DonateDialog donateDialog = new DonateDialog();
-//                donateDialog.show(getFragmentManager(), "donate");
+                DonateDialog donateDialog = new DonateDialog();
+                donateDialog.show(getFragmentManager(), "donate");
                 break;
             case R.id.im_about:
-                CommUtil.showAboutDialog(this);
+                // 关于
+                DialogUtil.showAboutDialog(this);
                 break;
         }
     }

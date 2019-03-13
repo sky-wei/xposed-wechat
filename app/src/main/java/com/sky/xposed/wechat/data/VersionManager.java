@@ -26,7 +26,9 @@ import com.sky.xposed.wechat.data.config.WeConfig703;
 import com.sky.xposed.wechat.plugin.interfaces.XConfig;
 import com.sky.xposed.wechat.plugin.interfaces.XVersionManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -97,6 +99,11 @@ public class VersionManager implements XVersionManager {
             mVersionConfig = getSupportConfig(CONFIG_MAP.get(getVersionName()));
         }
         return mVersionConfig;
+    }
+
+    @Override
+    public List<String> getSupportVersion() {
+        return new ArrayList<>(CONFIG_MAP.keySet());
     }
 
     /**

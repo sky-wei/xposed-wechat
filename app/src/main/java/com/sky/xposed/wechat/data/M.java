@@ -30,6 +30,8 @@ public final class M {
         public static final int class_tinker_loader_app_TinkerApplication = 0x1f000001;
 
         public static final int class_ui_LauncherUI = 0x1f000002;
+
+        public static final int class_plugin_webwx_ui_ExtDeviceWXLoginUI = 0x1f000003;
     }
 
     public static final class method {
@@ -39,6 +41,8 @@ public final class M {
         public static final int method_ui_LauncherUI_onCreateOptionsMenu = 0x2f000002;
 
         public static final int method_ui_LauncherUI_onOptionsItemSelected = 0x2f000003;
+
+        public static final int method_plugin_webwx_ui_ExtDeviceWXLoginUI_onResume = 0x1f000004;
     }
 
     public static final class field {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sky.xposed.wechat.plugin.debug;
+package com.sky.xposed.wechat.plugin.develop;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,14 +26,15 @@ import com.sky.xposed.wechat.Constant;
 import com.sky.xposed.wechat.data.model.PluginInfo;
 import com.sky.xposed.wechat.plugin.base.BasePlugin;
 import com.sky.xposed.wechat.plugin.interfaces.XPluginManager;
+import com.sky.xposed.wechat.ui.dialog.DevelopDialog;
 import com.sky.xposed.wechat.util.ToStringUtil;
 
 /**
  * Created by sky on 2018/12/19.
  */
-public class DebugPlugin extends BasePlugin {
+public class DevelopPlugin extends BasePlugin {
 
-    public DebugPlugin(XPluginManager pluginManager) {
+    public DevelopPlugin(XPluginManager pluginManager) {
         super(pluginManager);
     }
 
@@ -85,5 +86,7 @@ public class DebugPlugin extends BasePlugin {
     @Override
     public void openSettings(Activity activity) {
 
+        DevelopDialog developDialog = new DevelopDialog();
+        developDialog.show(activity.getFragmentManager(), "develop");
     }
 }
